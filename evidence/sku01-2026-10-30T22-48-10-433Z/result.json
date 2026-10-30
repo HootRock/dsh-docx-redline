@@ -1,0 +1,137 @@
+{
+  "run_id": "sku01-2026-10-30T22-48-10-433Z",
+  "timestamp": "2026-10-30T22:48:10.535Z",
+  "scope": "SKU-01-S1",
+  "status": "partial",
+  "counted": false,
+  "note": "synthetic only; user-approved public/synthetic demo; 0 real DOCX pairs",
+  "samples": [
+    {
+      "name": "sample-0",
+      "sha256": "0611acbcf0b25bce41e22b0acdd23b2c4b65261190d5569b84054c3ea86d171f",
+      "parts": 9
+    },
+    {
+      "name": "sample-1",
+      "sha256": "b4d24e2fb1cf69f87306da356d019b2b6eb5f42c8f205778f753f4ae068eeeef",
+      "parts": 9
+    },
+    {
+      "name": "sample-2",
+      "sha256": "455b42b5c4e1af2c01426b5fb677a032117885efe4b2be3d6dc5e42acd4a46c0",
+      "parts": 9
+    },
+    {
+      "name": "sample-3",
+      "sha256": "61a0579226ae2855007b5327e1a5d1f9a35ff069e6e495d7e80ed95aacda55d2",
+      "parts": 9
+    },
+    {
+      "name": "sample-4",
+      "sha256": "4ad57e617b035a097abb4db4d7dde9368027bd80ae6628f1f84ad5161dfd0988",
+      "parts": 9
+    },
+    {
+      "name": "sample-5",
+      "sha256": "b4d24e2fb1cf69f87306da356d019b2b6eb5f42c8f205778f753f4ae068eeeef",
+      "parts": 9
+    },
+    {
+      "name": "sample-6",
+      "sha256": "55ce82462eaf47ab8faa3856fb8c7f14dd8042e3ba396160e8976b92e2fb8a59",
+      "parts": 9
+    },
+    {
+      "name": "sample-7",
+      "sha256": "83a42aaca75f8e2c1531047ba1b85a4801bf65dcd85df42e1ee7b7fd99f36b5f",
+      "parts": 9
+    },
+    {
+      "name": "sample-8",
+      "sha256": "4ad57e617b035a097abb4db4d7dde9368027bd80ae6628f1f84ad5161dfd0988",
+      "parts": 9
+    },
+    {
+      "name": "sample-9",
+      "sha256": "2b20566933b5af0d6a83e90d1658a035b9cf309e96ef3be1eead8e45abab2708",
+      "parts": 9
+    },
+    {
+      "name": "sample-10",
+      "sha256": "455b42b5c4e1af2c01426b5fb677a032117885efe4b2be3d6dc5e42acd4a46c0",
+      "parts": 9
+    },
+    {
+      "name": "sample-11",
+      "sha256": "83a42aaca75f8e2c1531047ba1b85a4801bf65dcd85df42e1ee7b7fd99f36b5f",
+      "parts": 9
+    },
+    {
+      "name": "sample-12",
+      "sha256": "0611acbcf0b25bce41e22b0acdd23b2c4b65261190d5569b84054c3ea86d171f",
+      "parts": 9
+    },
+    {
+      "name": "sample-13",
+      "sha256": "b4d24e2fb1cf69f87306da356d019b2b6eb5f42c8f205778f753f4ae068eeeef",
+      "parts": 9
+    },
+    {
+      "name": "sample-14",
+      "sha256": "455b42b5c4e1af2c01426b5fb677a032117885efe4b2be3d6dc5e42acd4a46c0",
+      "parts": 9
+    },
+    {
+      "name": "sample-15",
+      "sha256": "61a0579226ae2855007b5327e1a5d1f9a35ff069e6e495d7e80ed95aacda55d2",
+      "parts": 9
+    },
+    {
+      "name": "sample-16",
+      "sha256": "4ad57e617b035a097abb4db4d7dde9368027bd80ae6628f1f84ad5161dfd0988",
+      "parts": 9
+    },
+    {
+      "name": "sample-17",
+      "sha256": "b4d24e2fb1cf69f87306da356d019b2b6eb5f42c8f205778f753f4ae068eeeef",
+      "parts": 9
+    },
+    {
+      "name": "sample-18",
+      "sha256": "55ce82462eaf47ab8faa3856fb8c7f14dd8042e3ba396160e8976b92e2fb8a59",
+      "parts": 9
+    },
+    {
+      "name": "sample-19",
+      "sha256": "83a42aaca75f8e2c1531047ba1b85a4801bf65dcd85df42e1ee7b7fd99f36b5f",
+      "parts": 9
+    }
+  ],
+  "metrics": [
+    {
+      "req_id": "SKU-01-A01",
+      "metric": "无改动往返通过率（20 合成）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A02",
+      "metric": "结构覆盖（6 类）",
+      "threshold": "6/6",
+      "actual": 6,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A03",
+      "metric": "畸形拒绝率（5 份）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    }
+  ],
+  "pass": true
+}
