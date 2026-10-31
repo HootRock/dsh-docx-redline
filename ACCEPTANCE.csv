@@ -1,4 +1,4 @@
 req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted
-SKU-01-A01,无改动往返通过率（20 合成）,100%,1,scripts/acceptance.mjs,0f07d3a5e8d42bf4d1d9ec13bb741f3181464831e7f068b8a893ee352e2a02b2,true,public/synthetic,false
-SKU-01-A02,结构覆盖（6 类）,6/6,6,scripts/acceptance.mjs,0f07d3a5e8d42bf4d1d9ec13bb741f3181464831e7f068b8a893ee352e2a02b2,true,public/synthetic,false
-SKU-01-A03,畸形拒绝率（5 份）,100%,1,scripts/acceptance.mjs,0f07d3a5e8d42bf4d1d9ec13bb741f3181464831e7f068b8a893ee352e2a02b2,true,public/synthetic,false
+SKU-01-A01,无改动往返通过率（20 合成）,100%,1,scripts/acceptance.mjs,ed72410b6847650942a8192d1d68d121f5700accd5aad37dab4cf8bab864fe1e,true,public/synthetic,false
+SKU-01-A02,结构覆盖（6 类）,6/6,6,scripts/acceptance.mjs,ed72410b6847650942a8192d1d68d121f5700accd5aad37dab4cf8bab864fe1e,true,public/synthetic,false
+SKU-01-A03,畸形拒绝率（5 份）,100%,1,scripts/acceptance.mjs,ed72410b6847650942a8192d1d68d121f5700accd5aad37dab4cf8bab864fe1e,true,public/synthetic,false

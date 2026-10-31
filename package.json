@@ -1,7 +1,7 @@
 {
   "name": "@perrylink/dsh-docx-redline",
-  "version": "0.1.0-alpha.3",
-  "description": "DOCX structure inspect and no-change roundtrip for DeepSeek Harness (SKU-01 S1, public/synthetic demo).",
+  "version": "0.1.0-alpha.4",
+  "description": "DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace.",
   "type": "module",
   "main": "./lib/plugin/index.js",
   "types": "./lib/plugin/index.d.ts",
@@ -45,7 +45,9 @@
     "docx",
     "redline",
     "docx-inspect",
-    "perrylink"
+    "perrylink",
+    "ooxml",
+    "document"
   ],
   "repository": {
     "type": "git",
@@ -80,5 +82,9 @@
     "@deepseek-ai/schemastery": "3.18.5",
     "@types/node": "^24.0.0",
     "typescript": "7.0.2"
+  },
+  "homepage": "https://github.com/PerryLink/dsh-docx-redline#readme",
+  "bugs": {
+    "url": "https://github.com/PerryLink/dsh-docx-redline/issues"
   }
 }
