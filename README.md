@@ -1,99 +1,118 @@
+<div align="center">
+
 # dsh-docx-redline
 
-> 🧊 **FROZEN — 2026-10-31. No new features.** This public/synthetic S1 demo is not GA; it stays installable and only genuine breakage is fixed.
+[![npm](https://img.shields.io/npm/v/dsh-docx-redline)](https://www.npmjs.com/package/dsh-docx-redline)
+[![CI](https://github.com/PerryLink/dsh-docx-redline/actions/workflows/ci.yml/badge.svg)](https://github.com/PerryLink/dsh-docx-redline/actions)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![dsh-plugin](https://img.shields.io/badge/dsh--plugin-%E2%9C%93-green)](https://github.com/topics/dsh-plugin)
+[![docs](https://img.shields.io/badge/docs-domain%20index-0b5fff)](https://perrylink.github.io/dsh-plugins/)
+
+**DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace.**
+
+> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim.
+
+> 🧊 **FROZEN — 2026-10-31. No new features.** Installable; only genuine breakage is fixed.
 
 ## Maintenance status: 🧊 FROZEN
 
-Frozen on 2026-10-31. This repository is a public/synthetic S1 demo, not a validated product. The npm package stays installable; no new features are planned.
+Frozen on 2026-10-31; the package stays installable, but feature work stops.
 
+[English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
-DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace for DeepSeek Harness.
+```sh
+dsh plugin --profile <profile> add dsh-docx-redline
+```
 
-> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim. All acceptance rows are `counted=false`.
+</div>
+
+![Workflow diagram for dsh-docx-redline: local input, plugin, local output.](docs/assets/dsh-docx-redline-flow.svg)
+
+*Workflow: local input → plugin → local output. No model call is required.*
 
 ## Install
+
+Install and verify:
 
 ```sh
 dsh plugin --profile <profile> add dsh-docx-redline
 dsh --profile <profile> --dump-config | grep dsh-docx-redline
 ```
 
-Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
+Uninstall:
 
-<details>
-<summary>中文摘要</summary>
+```sh
+dsh plugin --profile <profile> remove dsh-docx-redline
+```
 
-DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 安装：`dsh plugin --profile <profile> add dsh-docx-redline`。公开/合成、alpha、非 GA。
+## What it does
 
-</details>
+DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace. Runs locally on DeepSeek Harness. The table below is the exact tool surface; the examples use the real command surface.
+
+Input and output stay local; nothing is uploaded.
 
 ## Tools
 
-| Tool | What it does | Risk |
+Tool names and descriptions are kept in English to match the runtime output.
+
+| Tool | Purpose | Risk |
 |---|---|---|
 | `doc.inspect` | Read a local `.docx` ZIP/XML, store the original, and report part SHA-256 plus structure counts (paragraphs, tables, headers/footers, footnotes, comments, fields, bookmarks, numbering, sections, styles) | R0 read + local store |
 | `doc.roundtrip` | Copy the original byte-for-byte and compare every part hash; return a zero-diff report | R1 local write |
 | `doc.replace_text` | Replace one exact `w:t` run; fail closed when the text is not unique or spans runs | R1 local write |
 | `redline.diff` | Text-level paragraph diff between two inspected DOCX files; no OOXML writing | R0 |
 
-## Input / output
-
-**Input:** local `.docx` ZIP packages. **Output:** a structure report (JSON), a byte-exact roundtrip report, a limited text-replaced copy, or a paragraph-level diff. Comments, headers/footers and fields are preserved by the replace path; they are not edited.
-
-## Configuration
-
-| Env | Default | Meaning |
-|---|---|---|
-| `DSH_DOCX_HOME` | `$DSH_HOME/storages/dsh-docx-redline` | originals and roundtrip output |
-| `DSH_DOCX_INPUT_ROOTS` | `current working directory` | `path.delimiter`-separated allowlist for input paths |
-
-## Limits / non-claims
-
-- No accept/reject revisions, no rendered redline, no Word/LibreOffice automation, and no general OOXML writing.
-- `doc.replace_text` only replaces one exact `w:t` run; multi-run or repeated text fails closed.
-- Only `.docx` ZIP packages; encrypted or macro-only documents fail closed.
-- No Client, Skill, Bundle, or MCP surface.
-- No customer evidence, customer data, or production-readiness claim; all fixtures are public/synthetic.
-
-## Public sample
-
-8 MIT DOCX samples from `python-docx`; structure/roundtrip/replace tests. No customer document is included.
-
-## 中文说明
-
-DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。**公开/合成、alpha、非 GA**；没有客户文档。
-
-### 安装
+## Quick start
 
 ```sh
 dsh plugin --profile <profile> add dsh-docx-redline
+dsh --profile <profile> --dump-config | grep dsh-docx-redline
 ```
 
-### 工具
+## Limits
 
-| 工具 | 作用 |
-|---|---|
-| `doc.inspect` | 读 DOCX ZIP/XML，存原件，报告部件 SHA-256 与结构计数（段落、表格、页眉页脚、脚注、批注、域、书签、编号、节、样式） |
-| `doc.roundtrip` | 逐字节复制并比对每个部件 hash，返回零差异报告 |
-| `doc.replace_text` | 只替换一个精确 `w:t` run；不唯一/跨 run 就失败关闭 |
-| `redline.diff` | 两个已检查 DOCX 的段落级文本 diff，不写 OOXML |
+- Public/synthetic only; no customer data or customer evidence.
+- Alpha/partial, not counted, no GA or production-readiness claim.
+- No model or network call unless a tool explicitly says so.
+- The exact per-tool boundaries are in the table and `ACCEPTANCE.csv`.
 
-### 输入 / 输出
+## Public sample
 
-输入本地 `.docx`；输出结构报告 JSON、roundtrip 报告、有限替换副本或段落 diff。替换路径保留批注/页眉页脚/域，但不编辑它们。
-
-### 边界
-
-- 不接受/拒绝修订、不渲染 redline、不调 Word/LibreOffice、不做通用 OOXML 写。
-- 只替换一个精确 `w:t` run；多 run 或重复文本失败关闭。
-- 只有 `.docx` ZIP；加密/宏文档失败关闭；无 Client/Skill/Bundle/MCP。
+Public/synthetic fixtures live in `test/fixtures/`; `ACCEPTANCE.csv` records the public checks with `counted=false`.
 
 ## Development
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test && pnpm gate:sku01
+pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## Family
+
+<details>
+<summary>DSH domain plugin family (15 packages + 2 suites)</summary>
+
+| Package | npm |
+|---|---|
+| **[dsh-einvoice](https://github.com/PerryLink/dsh-einvoice)** | [npm](https://www.npmjs.com/package/dsh-einvoice) |
+| **[dsh-docx-redline](https://github.com/PerryLink/dsh-docx-redline)** | [npm](https://www.npmjs.com/package/dsh-docx-redline) |
+| **[dsh-policy-ledger](https://github.com/PerryLink/dsh-policy-ledger)** | [npm](https://www.npmjs.com/package/dsh-policy-ledger) |
+| **[dsh-ghg](https://github.com/PerryLink/dsh-ghg)** | [npm](https://www.npmjs.com/package/dsh-ghg) |
+| **[dsh-bankrec](https://github.com/PerryLink/dsh-bankrec)** | [npm](https://www.npmjs.com/package/dsh-bankrec) |
+| **[dsh-ap-three-way](https://github.com/PerryLink/dsh-ap-three-way)** | [npm](https://www.npmjs.com/package/dsh-ap-three-way) |
+| **[dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto)** | [npm](https://www.npmjs.com/package/dsh-ifc-qto) |
+| **[dsh-qms-capa](https://github.com/PerryLink/dsh-qms-capa)** | [npm](https://www.npmjs.com/package/dsh-qms-capa) |
+| **[dsh-legal-intake](https://github.com/PerryLink/dsh-legal-intake)** | [npm](https://www.npmjs.com/package/dsh-legal-intake) |
+| **[dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause)** | [npm](https://www.npmjs.com/package/dsh-legal-clause) |
+| **[dsh-freight-audit](https://github.com/PerryLink/dsh-freight-audit)** | [npm](https://www.npmjs.com/package/dsh-freight-audit) |
+| **[dsh-hs-candidate](https://github.com/PerryLink/dsh-hs-candidate)** | [npm](https://www.npmjs.com/package/dsh-hs-candidate) |
+| **[dsh-travel-recon](https://github.com/PerryLink/dsh-travel-recon)** | [npm](https://www.npmjs.com/package/dsh-travel-recon) |
+| **[dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint)** | [npm](https://www.npmjs.com/package/dsh-pim-lint) |
+| **[dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)** | [npm](https://www.npmjs.com/package/dsh-eval-pack) |
+| **[dsh-finops-suite](https://github.com/PerryLink/dsh-finops-suite)** | [npm](https://www.npmjs.com/package/dsh-finops-suite) |
+| **[dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)** | [npm](https://www.npmjs.com/package/dsh-contract-suite) |
+
+</details>
 
 ## License
 
