@@ -22,3 +22,7 @@
 
 - Added 6 MIT test DOCX from `python-openxml/python-docx` under `fixtures/public/python-docx/` with LICENSE/SOURCE; public test `test/public-docx.test.mjs` passes 6/6.
 - Added `.github/workflows/ci.yml` (Node 24, pnpm 11.28.5, build/lint/typecheck/test/gate:sku01).
+
+### alpha.1 verified
+
+- `latest`/`next` alpha.1; public MIT DOCX tests 6/6; CI run 41168443922 success.
