@@ -17,3 +17,8 @@
 - `pnpm test` 4/4; `gate:sku01` 3/3 (roundtrip 20/20, structure 6/6, malformed 5/5); lint/typecheck/pack/SBOM/license pass.
 - npm publish exit 0; tarball `a6121063c7d351b959a5702faf1d8812514c46d6`; `dist-tags` latest/next `0.1.0-alpha.0`.
 - Registry tarball install + layer check passed; pnpm metadata mirror lag noted in `PUBLISH-STATUS.md`.
+
+### Public MIT DOCX samples + CI (2026-10-31)
+
+- Added 6 MIT test DOCX from `python-openxml/python-docx` under `fixtures/public/python-docx/` with LICENSE/SOURCE; public test `test/public-docx.test.mjs` passes 6/6.
+- Added `.github/workflows/ci.yml` (Node 24, pnpm 11.28.5, build/lint/typecheck/test/gate:sku01).

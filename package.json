@@ -1,6 +1,6 @@
 {
   "name": "@perrylink/dsh-docx-redline",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "DOCX structure inspect and no-change roundtrip for DeepSeek Harness (SKU-01 S1, public/synthetic demo).",
   "type": "module",
   "main": "./lib/plugin/index.js",
