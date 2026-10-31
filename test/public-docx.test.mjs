@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
-import { inspectDocx, docxPartHashes } from '../lib/adapters/docx-zip.js'
+import { inspectDocx, docxPartHashes, paragraphTexts } from '../lib/adapters/docx-zip.js'
 
 const dir = path.resolve(process.cwd(), 'fixtures/public/python-docx')
 const files = readdirSync(dir).filter((name) => name.endsWith('.docx')).sort()
@@ -43,4 +43,25 @@ test('redline.diff on two public MIT DOCX files', async () => {
   } finally {
     await rm(work, { recursive: true, force: true })
   }
+})
+
+test('public DOCX: limited text replace preserves non-document parts', async () => {
+  const { mkdtemp, readFile, rm } = await import('node:fs/promises')
+  const { tmpdir } = await import('node:os')
+  const { createTools } = await import('../lib/plugin/tools.js')
+  class FakeTable { map = new Map(); get(k){return this.map.get(k)}; entries(){return this.map.entries()}; get size(){return this.map.size}; async put(k,v){this.map.set(k,v)} }
+  const source = path.join(dir, 'comments-rich-para.docx')
+  const work = await mkdtemp(path.join(tmpdir(), 'docx-replace-public-'))
+  try {
+    const tools = createTools({ table: new FakeTable(), baseDir: work, inputRoots: [dir] })
+    const by = Object.fromEntries(tools.map((tool) => [tool.name, tool]))
+    const exec = { callId: 'public-replace', agent: { id: 'tester' } }
+    const before = docxPartHashes(readFileSync(source))
+    const inspected = await by['doc.inspect'].execute({ path: source }, exec)
+    const replaced = await by['doc.replace_text'].execute({ doc_id: inspected.doc_id, find: 'Document text', replace: 'Changed text' }, exec)
+    const after = docxPartHashes(await readFile(replaced.path))
+    assert.notEqual(before.get('word/document.xml'), after.get('word/document.xml'))
+    for (const [name, hash] of before) if (name !== 'word/document.xml') assert.equal(after.get(name), hash, name)
+    assert.ok(paragraphTexts(await readFile(replaced.path)).some((text) => text.includes('Changed text')))
+  } finally { await rm(work, { recursive: true, force: true }) }
 })
