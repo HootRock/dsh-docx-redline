@@ -19,3 +19,9 @@
 - `latest` and `next` both `0.1.0-alpha.1`; tarball includes the updated public-sample notice but not the DOCX binaries/tests (they stay in GitHub, not npm).
 - `dist-tags` verified after propagation.
 - GitHub Actions `ci` run 41168443922: success; 10/10 local tests (4 unit + 6 public MIT DOCX samples), gate 3 rows.
+
+## 0.1.0-alpha.2 — verified 2026-10-31T12:32+08:00
+
+- `latest` and `next` both `0.1.0-alpha.2`; 11/11 local tests, 3 S1 gate rows.
+- GitHub Actions `ci` run 41168790819: success.
+- `redline.diff` is **text-level paragraph diff only**; it does not write OOXML or produce a Word redline, and has no separate acceptance row.

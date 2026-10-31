@@ -30,3 +30,7 @@
 ### alpha.2 — text-level diff
 
 - Added `redline.diff` (paragraph LCS, add/remove hunks); does not write OOXML; public samples remain MIT.
+
+### alpha.2 verified
+
+- `latest`/`next` alpha.2; 11/11 tests; CI run 41168790819 success. `redline.diff` is text-level only.
