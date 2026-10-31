@@ -1,4 +1,4 @@
-# @perrylink/dsh-docx-redline
+# dsh-docx-redline
 
 DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace for DeepSeek Harness.
 
@@ -7,7 +7,7 @@ DOCX structure inspection, byte-exact roundtrip and limited exact-run text repla
 ## Install
 
 ```sh
-dsh plugin --profile <profile> add @perrylink/dsh-docx-redline
+dsh plugin --profile <profile> add dsh-docx-redline
 dsh --profile <profile> --dump-config | grep dsh-docx-redline
 ```
 
@@ -16,7 +16,7 @@ Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
 <details>
 <summary>中文摘要</summary>
 
-DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 安装：`dsh plugin --profile <profile> add @perrylink/dsh-docx-redline`。公开/合成、alpha、非 GA。
+DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 安装：`dsh plugin --profile <profile> add dsh-docx-redline`。公开/合成、alpha、非 GA。
 
 </details>
 

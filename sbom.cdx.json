@@ -7,7 +7,7 @@
     "timestamp": "2026-10-31T04:29:43.846Z",
     "component": {
       "type": "application",
-      "name": "@perrylink/dsh-docx-redline",
+      "name": "dsh-docx-redline",
       "version": "0.1.0-alpha.2"
     }
   },

@@ -42,7 +42,7 @@ Synthetic DOCX generated in `scripts/acceptance.mjs` and tests; 20 valid + 5 mal
 
 ## 8. Publish
 
-`@perrylink/dsh-docx-redline@0.1.0-alpha.0`, `--tag next`, public registry. Name audit: scoped and bare both 404; similar public packages are `@ansonlai/docx-redline-js`, `docxodus`, `jubarte-redlines` (different scope/API).
+`dsh-docx-redline@0.1.0-alpha.0`, `--tag next`, public registry. Name audit: scoped and bare both 404; similar public packages are `@ansonlai/docx-redline-js`, `docxodus`, `jubarte-redlines` (different scope/API).
 
 ## 9. Risks
 

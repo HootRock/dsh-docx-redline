@@ -1,4 +1,4 @@
-@perrylink/dsh-docx-redline
+dsh-docx-redline
 Copyright 2026 PerryLink
 
 This product includes DOCX parsing built with fflate (MIT) and fast-xml-parser (MIT).
