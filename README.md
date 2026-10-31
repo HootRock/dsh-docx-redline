@@ -2,7 +2,7 @@
 
 DOCX structure inspection and no-change roundtrip for DeepSeek Harness — **SKU-01 S1 public/synthetic demo**.
 
-> **Status: partial / not GA.** The customer gate (20 real double-version DOCX pairs + 5 malformed) is **0/0**. The user explicitly approved the public/synthetic demo path on 2026-10-31. No customer document is included.
+> **Status: partial / not GA.** Customer-evidence work (20 real double-version DOCX pairs + 5 malformed) is **permanently out of scope** (see `PUBLIC-ONLY-BOUNDARY.md` in `04-build`). This is a public/synthetic package; no customer document is included.
 
 ## Install
 
