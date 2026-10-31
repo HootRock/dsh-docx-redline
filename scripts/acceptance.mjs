@@ -123,3 +123,16 @@ if (!result.pass) {
   process.exit(1)
 }
 console.log(`acceptance ok: ${runId}; coverage=${coverage.size}/6; roundtrip=${roundtripPass}/20; malformed=${malformedRejected}/5`)
+
+
+// Normalize the public-only acceptance schema: source + counted=false.
+{
+  const fs = await import('node:fs')
+  const file = 'ACCEPTANCE.csv'
+  const lines = fs.readFileSync(file, 'utf8').trim().split('\n')
+  if (!lines[0].includes('source,counted')) {
+    lines[0] += ',source,counted'
+    for (let i = 1; i < lines.length; i += 1) lines[i] += ',public/synthetic,false'
+    fs.writeFileSync(file, lines.join('\n') + '\n')
+  }
+}
