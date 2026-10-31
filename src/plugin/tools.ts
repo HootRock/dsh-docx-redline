@@ -6,7 +6,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { DocxError, type DocxStructure } from '../core/docx.js'
-import { docxPartHashes, inspectDocx, paragraphTexts } from '../adapters/docx-zip.js'
+import { docxPartHashes, inspectDocx, paragraphTexts, replaceExactText } from '../adapters/docx-zip.js'
 import {
   emptyDocxRecord,
   newDocId,
@@ -263,5 +263,24 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  return [inspect, roundtrip, diff]
+
+  const replaceText = defineTool({
+    name: 'doc.replace_text',
+    description: 'Replace one exact text run in word/document.xml and write a new DOCX. Limited OOXML write: does not preserve/alter comments or fields beyond the matched text; fail-closed unless exactly one match. Local R1 write.',
+    parameters: { doc_id: { type: 'string', required: true }, find: { type: 'string', required: true }, replace: { type: 'string', required: true }, output_name: { type: 'string' } },
+    output: { schema: { type: 'object', additionalProperties: false, properties: { path: { type: 'string', required: true }, sha256: { type: 'string', required: true }, replacements: { type: 'number', required: true } } }, render: (_a, v) => text(`replaced 1 run -> ${v.path}`) },
+    async execute(args) {
+      const record = deps.table.get(args.doc_id)
+      if (!record) throw new DocxError('E_DOC_DOC_NOT_FOUND', `unknown doc: ${args.doc_id}`)
+      const original = await readFile(record.source_path)
+      const result = replaceExactText(original, args.find, args.replace)
+      const dir = path.join(deps.baseDir, 'outputs'); await mkdir(dir, { recursive: true })
+      const name = (args.output_name ?? `${record.doc_id}-replaced.docx`).replace(/[^A-Za-z0-9._-]/g, '_')
+      const output = path.join(dir, name.endsWith('.docx') ? name : `${name}.docx`)
+      await writeFile(output, result.buffer)
+      return { path: output, sha256: sha256Buffer(result.buffer), replacements: result.replacements }
+    },
+  })
+
+  return [inspect, roundtrip, diff, replaceText]
 }

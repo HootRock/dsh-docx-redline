@@ -34,3 +34,7 @@
 ### alpha.2 verified
 
 - `latest`/`next` alpha.2; 11/11 tests; CI run 41168790819 success. `redline.diff` is text-level only.
+
+### alpha.3 — limited OOXML replace
+
+- Added `doc.replace_text`; exact text run write; tests 13/13.

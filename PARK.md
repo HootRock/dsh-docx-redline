@@ -1,3 +1,5 @@
+> **HISTORICAL — customer-evidence/GA work was permanently removed from scope on 2026-10-31; this PARK document is not an active roadmap. See 04-build/PUBLIC-ONLY-BOUNDARY.md.**
+
 # PARK superseded — SKU-01
 
 On 2026-10-31 the user explicitly approved the public/synthetic demo path for subsequent SKUs. This file is kept for history; the active evidence/approval record is `APPROVAL-AND-EVIDENCE.md`.

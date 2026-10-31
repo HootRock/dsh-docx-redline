@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { unzipSync } from 'fflate'
+import { unzipSync, zipSync } from 'fflate'
 import { XMLParser } from 'fast-xml-parser'
 import {
   DocxError,
@@ -167,4 +167,20 @@ export function paragraphTexts(buffer: Buffer): string[] {
 export function docxPartHashes(buffer: Buffer): Map<string, string> {
   const raw = unzipSync(buffer)
   return new Map(Object.entries(raw).filter(([name]) => !name.endsWith('/')).map(([name, bytes]) => [name, sha256(bytes)]))
+}
+
+
+export function replaceExactText(buffer: Buffer, find: string, replace: string): { buffer: Buffer; replacements: number } {
+  if (!find) throw new DocxError('E_DOC_WRITE_UNSUPPORTED', 'find must not be empty')
+  const raw = unzipSync(buffer)
+  const document = raw['word/document.xml']
+  if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
+  const xml = Buffer.from(document).toString('utf8')
+  const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const needle = new RegExp(`(<w:t(?:\\s[^>]*)?>)${escape(find).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(</w:t>)`, 'g')
+  const matches = [...xml.matchAll(needle)]
+  if (matches.length !== 1) throw new DocxError('E_DOC_WRITE_UNSUPPORTED', `expected exactly one text match, found ${matches.length}`)
+  const next = xml.replace(needle, `$1${escape(replace)}$2`)
+  raw['word/document.xml'] = new TextEncoder().encode(next)
+  return { buffer: Buffer.from(zipSync(raw)), replacements: 1 }
 }

@@ -1,10 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { strToU8, zipSync } from 'fflate'
-import { inspectDocx } from '../lib/adapters/docx-zip.js'
+import { inspectDocx, paragraphTexts } from '../lib/adapters/docx-zip.js'
 import { createTools } from '../lib/plugin/tools.js'
 
 class FakeTable {
@@ -125,4 +125,21 @@ test('redline.diff reports paragraph changes without writing OOXML', async () =>
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
+})
+
+test('doc.replace_text limited OOXML write', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'dsh-docx-replace-'))
+  try {
+    const file = path.join(dir, 'base.docx')
+    await writeFile(file, makeDocx())
+    const tools = createTools({ table: new FakeTable(), baseDir: path.join(dir, 'store'), inputRoots: [dir] })
+    const by = Object.fromEntries(tools.map((tool) => [tool.name, tool]))
+    const exec = { callId: 'replace', agent: { id: 'tester' } }
+    const inspected = await by['doc.inspect'].execute({ path: file }, exec)
+    const replaced = await by['doc.replace_text'].execute({ doc_id: inspected.doc_id, find: 'Alpha', replace: 'Beta' }, exec)
+    assert.equal(replaced.replacements, 1)
+    const texts = paragraphTexts(await readFile(replaced.path))
+    assert.ok(texts.some((text) => text.includes('Beta')))
+    assert.equal(texts.some((text) => text.includes('Alpha')), false)
+  } finally { await rm(dir, { recursive: true, force: true }) }
 })

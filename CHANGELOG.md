@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.3 — 2026-10-31
+
+- Added limited `doc.replace_text` exact-run OOXML write; fails unless exactly one match; comments/fields not rewritten.
+
 ## 0.1.0-alpha.2 — 2026-10-31
 
 - Added `redline.diff` text-level paragraph diff; no OOXML writing or Word redline. Still partial/public-synthetic.

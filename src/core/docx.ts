@@ -35,6 +35,7 @@ export type DocxErrorCode =
   | 'E_DOC_UNREADABLE'
   | 'E_DOC_DOC_NOT_FOUND'
   | 'E_DOC_ROUNDTRIP_FAILED'
+  | 'E_DOC_WRITE_UNSUPPORTED'
 
 export class DocxError extends Error {
   readonly code: DocxErrorCode
