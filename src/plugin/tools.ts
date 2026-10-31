@@ -6,7 +6,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { DocxError, type DocxStructure } from '../core/docx.js'
-import { docxPartHashes, inspectDocx } from '../adapters/docx-zip.js'
+import { docxPartHashes, inspectDocx, paragraphTexts } from '../adapters/docx-zip.js'
 import {
   emptyDocxRecord,
   newDocId,
@@ -225,5 +225,43 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  return [inspect, roundtrip]
+
+  const diff = defineTool({
+    name: 'redline.diff',
+    description: 'Text-level paragraph diff between two inspected DOCX documents: added/removed paragraphs and ordered hunks. Read-only; does NOT write OOXML or produce a Word redline.',
+    parameters: { base_doc_id: { type: 'string', required: true }, target_doc_id: { type: 'string', required: true } },
+    output: {
+      schema: {
+        type: 'object', additionalProperties: false,
+        properties: {
+          base_doc_id: { type: 'string', required: true },
+          target_doc_id: { type: 'string', required: true },
+          added: { type: 'number', required: true },
+          removed: { type: 'number', required: true },
+          hunks: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { op: { type: 'string', required: true }, text: { type: 'string', required: true } } } },
+        },
+      },
+      render: (_a, v) => text(`diff +${v.added} -${v.removed}`),
+    },
+    async execute(args) {
+      const base = deps.table.get(args.base_doc_id)
+      const target = deps.table.get(args.target_doc_id)
+      if (!base) throw new DocxError('E_DOC_DOC_NOT_FOUND', `unknown base: ${args.base_doc_id}`)
+      if (!target) throw new DocxError('E_DOC_DOC_NOT_FOUND', `unknown target: ${args.target_doc_id}`)
+      const a = paragraphTexts(await readFile(base.source_path))
+      const b = paragraphTexts(await readFile(target.source_path))
+      const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0))
+      for (let i = a.length - 1; i >= 0; i -= 1) for (let j = b.length - 1; j >= 0; j -= 1) dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1])
+      const hunks: Array<{ op: string; text: string }> = []
+      let i = 0, j = 0, added = 0, removed = 0
+      while (i < a.length && j < b.length) {
+        if (a[i] === b[j]) { i += 1; j += 1 } else if (dp[i + 1][j] >= dp[i][j + 1]) { hunks.push({ op: 'remove', text: a[i]! }); removed += 1; i += 1 } else { hunks.push({ op: 'add', text: b[j]! }); added += 1; j += 1 }
+      }
+      while (i < a.length) { hunks.push({ op: 'remove', text: a[i]! }); removed += 1; i += 1 }
+      while (j < b.length) { hunks.push({ op: 'add', text: b[j]! }); added += 1; j += 1 }
+      return { base_doc_id: base.doc_id, target_doc_id: target.doc_id, added, removed, hunks }
+    },
+  })
+
+  return [inspect, roundtrip, diff]
 }

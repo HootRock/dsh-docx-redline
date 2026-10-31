@@ -1,14 +1,14 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:f0fc09e1-b624-410b-9be2-0ff8eb12e4ae",
+  "serialNumber": "urn:uuid:e397fc2f-34b4-47b3-9902-64c7468bdce5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-31T04:24:15.650Z",
+    "timestamp": "2026-10-31T04:29:43.846Z",
     "component": {
       "type": "application",
       "name": "@perrylink/dsh-docx-redline",
-      "version": "0.1.0-alpha.1"
+      "version": "0.1.0-alpha.2"
     }
   },
   "components": [

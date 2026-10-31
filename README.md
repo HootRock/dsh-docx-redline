@@ -19,6 +19,7 @@ No Client, Skill or Bundle in S1.
 |---|---|---|
 | `doc.inspect` | Read a local `.docx` ZIP/XML; store the original; report part SHA-256 and structure counts (paragraphs, tables, headers/footers, footnotes, comments, fields, bookmarks, numbering, sections, styles) | R0 read + local store |
 | `doc.roundtrip` | Copy the original byte-for-byte and compare every part hash; returns a zero-diff report | R1 local write |
+| `redline.diff` | Text-level paragraph diff between two inspected DOCX files; no OOXML writing | R0 |
 
 ## Configuration
 

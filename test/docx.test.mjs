@@ -106,3 +106,23 @@ test('path allowlist and unknown doc fail closed', async () => {
     await rm(dir, { recursive: true, force: true })
   }
 })
+
+test('redline.diff reports paragraph changes without writing OOXML', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'dsh-docx-diff-'))
+  try {
+    const baseFile = path.join(dir, 'base.docx')
+    const targetFile = path.join(dir, 'target.docx')
+    await writeFile(baseFile, makeDocx())
+    await writeFile(targetFile, makeDocx({ 'word/document.xml': strToU8(documentXml.replace('Alpha', 'Beta')) }))
+    const tools = createTools({ table: new FakeTable(), baseDir: path.join(dir, 'store'), inputRoots: [dir] })
+    const byName = Object.fromEntries(tools.map((tool) => [tool.name, tool]))
+    const exec = { callId: 'diff-1', agent: { id: 'tester' } }
+    const base = await byName['doc.inspect'].execute({ path: baseFile }, exec)
+    const target = await byName['doc.inspect'].execute({ path: targetFile }, exec)
+    const diff = await byName['redline.diff'].execute({ base_doc_id: base.doc_id, target_doc_id: target.doc_id }, exec)
+    assert.ok(diff.added + diff.removed > 0)
+    assert.ok(diff.hunks.length > 0)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})

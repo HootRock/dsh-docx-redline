@@ -26,3 +26,7 @@
 ### alpha.1 verified
 
 - `latest`/`next` alpha.1; public MIT DOCX tests 6/6; CI run 41168443922 success.
+
+### alpha.2 — text-level diff
+
+- Added `redline.diff` (paragraph LCS, add/remove hunks); does not write OOXML; public samples remain MIT.

@@ -136,6 +136,34 @@ export function docxContentHash(buffer: Buffer): string {
   return sha256(buffer)
 }
 
+export function paragraphTexts(buffer: Buffer): string[] {
+  const raw = unzipSync(buffer)
+  const document = raw['word/document.xml']
+  if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
+  const root = parseXml(Buffer.from(document).toString('utf8'))
+  const out: string[] = []
+  const collect = (value: unknown): string => {
+    if (Array.isArray(value)) return value.map(collect).join('')
+    if (value === null || value === undefined) return ''
+    if (typeof value !== 'object') return String(value)
+    const object = value as Record<string, unknown>
+    let text = ''
+    if (object.t !== undefined) text += collect(object.t)
+    if (object['#text'] !== undefined) text += String(object['#text'])
+    for (const [key, child] of Object.entries(object)) if (key !== 't' && key !== '#text') text += collect(child)
+    return text
+  }
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) { for (const item of value) visit(item); return }
+    const object = asObject(value)
+    if (!object) return
+    if (object.p !== undefined) for (const paragraph of asArray(object.p)) out.push(collect(paragraph).trim())
+    for (const [key, child] of Object.entries(object)) if (key !== 'p') visit(child)
+  }
+  visit(root)
+  return out
+}
+
 export function docxPartHashes(buffer: Buffer): Map<string, string> {
   const raw = unzipSync(buffer)
   return new Map(Object.entries(raw).filter(([name]) => !name.endsWith('/')).map(([name, bytes]) => [name, sha256(bytes)]))
