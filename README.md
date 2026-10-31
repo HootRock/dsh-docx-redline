@@ -59,6 +59,35 @@ DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 安装：`dsh
 
 8 MIT DOCX samples from `python-docx`; structure/roundtrip/replace tests. No customer document is included.
 
+## 中文说明
+
+DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。**公开/合成、alpha、非 GA**；没有客户文档。
+
+### 安装
+
+```sh
+dsh plugin --profile <profile> add dsh-docx-redline
+```
+
+### 工具
+
+| 工具 | 作用 |
+|---|---|
+| `doc.inspect` | 读 DOCX ZIP/XML，存原件，报告部件 SHA-256 与结构计数（段落、表格、页眉页脚、脚注、批注、域、书签、编号、节、样式） |
+| `doc.roundtrip` | 逐字节复制并比对每个部件 hash，返回零差异报告 |
+| `doc.replace_text` | 只替换一个精确 `w:t` run；不唯一/跨 run 就失败关闭 |
+| `redline.diff` | 两个已检查 DOCX 的段落级文本 diff，不写 OOXML |
+
+### 输入 / 输出
+
+输入本地 `.docx`；输出结构报告 JSON、roundtrip 报告、有限替换副本或段落 diff。替换路径保留批注/页眉页脚/域，但不编辑它们。
+
+### 边界
+
+- 不接受/拒绝修订、不渲染 redline、不调 Word/LibreOffice、不做通用 OOXML 写。
+- 只替换一个精确 `w:t` run；多 run 或重复文本失败关闭。
+- 只有 `.docx` ZIP；加密/宏文档失败关闭；无 Client/Skill/Bundle/MCP。
+
 ## Development
 
 ```sh
