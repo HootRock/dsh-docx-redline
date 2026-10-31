@@ -13,6 +13,7 @@ for (const name of files) {
     const result = inspectDocx(buffer)
     assert.ok(result.parts.length > 0)
     assert.ok(result.structure.paragraphs + result.structure.tables > 0)
+    if (name.includes('table')) assert.ok(result.structure.tables >= 1)
     assert.deepEqual(docxPartHashes(buffer), docxPartHashes(buffer))
   })
 }

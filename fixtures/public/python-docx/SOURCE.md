@@ -11,3 +11,5 @@ Files:
 - comments-rich-para.docx
 - sct-section-props.docx
 - par-hyperlinks.docx
+- blk-containing-table.docx
+- blk-paras-and-tables.docx
