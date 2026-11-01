@@ -1,19 +1,24 @@
 # Changelog
 
-## 0.1.0-alpha.3 — 2026-10-31
+All notable changes to `dsh-docx-redline` are documented here. The format follows Keep a Changelog; this project uses alpha versions.
 
-- Added limited `doc.replace_text` exact-run OOXML write; fails unless exactly one match; comments/fields not rewritten.
+## [0.1.0-alpha.7] — 2026-11-01
 
-## 0.1.0-alpha.2 — 2026-10-31
+### Added
 
-- Added `redline.diff` text-level paragraph diff; no OOXML writing or Word redline. Still partial/public-synthetic.
+- Five-language READMEs: English, 简体中文, Español, Português, हिन्दी.
+- Local workflow SVG at `docs/assets/dsh-docx-redline-flow.svg`.
+- Family cross-links (domain index, checker family, `dsh-kit`), compatibility, permissions, and related-work sections.
+- Standard repository files: `SECURITY.md`, `PRIVACY.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, and `icon.svg`.
 
-## 0.1.0-alpha.0 — 2026-10-31
+### Changed
 
-- First S1 slice: `doc.inspect` and `doc.roundtrip`.
-- DOCX ZIP/XML reader with six structure families; byte-for-byte no-change roundtrip.
-- `docx` storage domain; public/synthetic acceptance (`not counted`, `partial`).
+- README aligned with the PerryLink DSH checker/plugin family style; package remains public/synthetic, alpha, not GA.
 
-## 0.1.0-alpha.1 — 2026-10-31
+### Maintenance
 
-- Added public MIT DOCX sample tests (python-docx) and GitHub Actions CI; no runtime API change.
+- Frozen on 2026-10-31: no new features; only genuine breakage fixes.
+
+## [Earlier]
+
+Earlier alpha builds are available from npm and GitHub Releases; this file starts at the family-standard documentation wave.
