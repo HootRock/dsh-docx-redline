@@ -92,7 +92,7 @@ dsh --profile <profile> --dump-config | grep dsh-docx-redline
 
 ### Fixture-backed example
 
-Input: [`fixtures/public/python-docx/blk-containing-table.docx`](fixtures/public/python-docx/blk-containing-table.docx)
+Input: [`fixtures/public/python-docx/blk-containing-table.docx`](https://github.com/PerryLink/dsh-docx-redline/blob/main/fixtures/public/python-docx/blk-containing-table.docx)
 
 Command: `pnpm test`
 
@@ -141,6 +141,17 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ## Related work
 
 Sibling packages and family indexes: [dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto) · [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
+
+
+### Related checkers
+
+Each entry is a separate package with its own rule pack and version; install only the ones you need.
+
+| Package | Why it is relevant |
+|---|---|
+| [`dsh-gongwen-word-check`](https://github.com/PerryLink/dsh-gongwen-word-check) | Official-document formatting elements. |
+| [`dsh-archive-check`](https://github.com/PerryLink/dsh-archive-check) | Archive filing register and retention periods. |
+| [`dsh-paper-doc-adapter`](https://github.com/PerryLink/dsh-paper-doc-adapter) | Parsed exam-paper structural consistency. |
 
 - [Domain index](https://perrylink.github.io/dsh-plugins/)
 - [Checker family](https://perrylink.github.io/zh/checkers/)

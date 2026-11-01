@@ -92,7 +92,7 @@ dsh --profile <profile> --dump-config | grep dsh-docx-redline
 
 ### fixture 支撑的示例
 
-输入: [`fixtures/public/python-docx/blk-containing-table.docx`](fixtures/public/python-docx/blk-containing-table.docx)
+输入: [`fixtures/public/python-docx/blk-containing-table.docx`](https://github.com/PerryLink/dsh-docx-redline/blob/main/fixtures/public/python-docx/blk-containing-table.docx)
 
 命令: `pnpm test`
 
@@ -141,6 +141,8 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ## 相关项目
 
 兄弟包与家族索引： [dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto) · [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
+
+相关核查器（英文表）: [Related checkers](README.md#related-checkers).
 
 - [领域索引](https://perrylink.github.io/dsh-plugins/)
 - [Checker 家族](https://perrylink.github.io/zh/checkers/)

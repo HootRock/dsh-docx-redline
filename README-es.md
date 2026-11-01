@@ -92,7 +92,7 @@ dsh --profile <profile> --dump-config | grep dsh-docx-redline
 
 ### Ejemplo respaldado por fixture
 
-Entrada: [`fixtures/public/python-docx/blk-containing-table.docx`](fixtures/public/python-docx/blk-containing-table.docx)
+Entrada: [`fixtures/public/python-docx/blk-containing-table.docx`](https://github.com/PerryLink/dsh-docx-redline/blob/main/fixtures/public/python-docx/blk-containing-table.docx)
 
 Comando: `pnpm test`
 
@@ -141,6 +141,8 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ## Trabajo relacionado
 
 Paquetes hermanos e índices de familia: [dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto) · [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
+
+Verificadores relacionados (tabla en inglés): [Related checkers](README.md#related-checkers).
 
 - [Índice de dominio](https://perrylink.github.io/dsh-plugins/)
 - [Familia de checkers](https://perrylink.github.io/zh/checkers/)
