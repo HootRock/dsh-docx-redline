@@ -10,5 +10,11 @@
     "kind": "flow",
     "alt": "dsh-docx-redline flow diagram",
     "caption": "Pipeline diagram, schematic not test evidence."
+  },
+  {
+    "path": "docs/assets/dsh-docx-redline-capability2.png",
+    "kind": "capability",
+    "alt": "dsh-docx-redline second capability run",
+    "caption": "Real command: node --test test/relationships.test.mjs — 4 tests passed, 0 failed (OOXML package relationship integrity: unresolved r:id and missing target parts.) Run 2026-11-01; rendered from the captured terminal output."
   }
 ]

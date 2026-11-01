@@ -1,6 +1,12 @@
 # Changelog
 
-## [0.1.0-alpha.10] — 2026-11-01
+## [0.1.0-alpha.11] — 2026-11-01
+
+### Added
+
+- `doc.relationship_check`: OOXML package relationship integrity — every `r:id`/`r:embed` in `document.xml` must be declared in `document.xml.rels`, and every internal target part must exist in the zip. Verified by `node --test test/*.test.mjs` (22/22).
+
+## [Unreleased]
 
 ### Added
 

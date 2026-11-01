@@ -6,7 +6,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { DocxError, type DocxStructure } from '../core/docx.js'
-import { docxPartHashes, inspectDocx, paragraphTexts, replaceExactText, revisionSummary } from '../adapters/docx-zip.js'
+import { docxPartHashes, inspectDocx, paragraphTexts, relationshipCheck, replaceExactText, revisionSummary } from '../adapters/docx-zip.js'
 import {
   emptyDocxRecord,
   newDocId,
@@ -294,5 +294,16 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  return [inspect, roundtrip, diff, replaceText, changeSummary]
+  const relCheck = defineTool({
+    name: 'doc.relationship_check',
+    description: 'Check OOXML package relationships: every r:id/r:embed in document.xml is declared in document.xml.rels, and every internal target part exists. Read-only; no repair.',
+    parameters: { path: { type: 'string', required: true, description: 'Local .docx path under the configured input roots' } },
+    output: { schema: { type: 'object', additionalProperties: false, properties: { relationships: { type: 'number', required: true }, referenced: { type: 'number', required: true }, external: { type: 'number', required: true }, issues: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { code: { type: 'string', required: true }, detail: { type: 'string', required: true } } } } } }, render: (_a, v) => text(`relationships ${v.relationships}, issues ${v.issues.length}`) },
+    async execute(args) {
+      const resolved = await resolveAllowedPath(args.path, deps.inputRoots)
+      return relationshipCheck(await readFile(resolved))
+    },
+  })
+
+  return [inspect, roundtrip, diff, replaceText, changeSummary, relCheck]
 }

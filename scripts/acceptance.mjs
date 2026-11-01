@@ -8,7 +8,7 @@ import path from 'node:path'
 import { strToU8, zipSync } from 'fflate'
 import { createTools } from '../lib/plugin/tools.js'
 import { DocxError } from '../lib/core/docx.js'
-import { revisionSummary } from '../lib/adapters/docx-zip.js'
+import { relationshipCheck, revisionSummary } from '../lib/adapters/docx-zip.js'
 
 class FakeTable {
   map = new Map()
@@ -107,11 +107,14 @@ const revBuf = Buffer.from(zipSync({
   'word/document.xml': strToU8(revXml),
 }))
 const rev = revisionSummary(revBuf)
+const relBuf = Buffer.from(zipSync({ '[Content_Types].xml': strToU8('<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>'), 'word/document.xml': strToU8('<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body><w:p><w:hyperlink r:id="rId1"/></w:p></w:body></w:document>'), 'word/_rels/document.xml.rels': strToU8('<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="x" Target="header1.xml"/></Relationships>'), 'word/header1.xml': strToU8('<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>') }))
+const rel = relationshipCheck(relBuf)
 const metrics = [
   { req_id: 'SKU-01-A01', metric: '无改动往返通过率（20 合成）', threshold: '100%', actual: roundtripPass / 20, pass: roundtripPass === 20, counted: false },
   { req_id: 'SKU-01-A02', metric: '结构覆盖（6 类）', threshold: '6/6', actual: coverage.size, pass: coverage.size === 6, counted: false },
   { req_id: 'SKU-01-A03', metric: '畸形拒绝率（5 份）', threshold: '100%', actual: malformedRejected / 5, pass: malformedRejected === 5, counted: false },
   { req_id: 'SKU-01-A04', metric: '修订统计（w:ins/w:del）', threshold: '2/1', actual: `${rev.insertions}/${rev.deletions}`, pass: rev.insertions === 2 && rev.deletions === 1 && rev.authors.A === 2, counted: false },
+  { req_id: 'SKU-01-A05', metric: 'OOXML 关系完整性', threshold: '0 issues', actual: rel.issues.length, pass: rel.issues.length === 0 && rel.referenced === 1 && rel.relationships === 1, counted: false },
 ]
 const result = {
   run_id: runId,

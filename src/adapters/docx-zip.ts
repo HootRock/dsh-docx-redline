@@ -210,3 +210,43 @@ export function revisionSummary(buffer: Buffer): RevisionSummary {
   }
   return { insertions: ins.length, deletions: del.length, authors, total: ins.length + del.length }
 }
+
+export interface RelationshipIssue { code: string; detail: string }
+export interface RelationshipReport {
+  relationships: number
+  referenced: number
+  external: number
+  issues: RelationshipIssue[]
+}
+/**
+ * OOXML package integrity: every r:id/r:embed used by word/document.xml must be declared in
+ * word/_rels/document.xml.rels, and every internal relationship target must exist in the zip.
+ * Read-only; clean-room from the ECMA-376 / ISO-IEC 29500 package model.
+ */
+export function relationshipCheck(buffer: Buffer): RelationshipReport {
+  const raw = unzipSync(buffer)
+  const document = raw['word/document.xml']
+  if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
+  const relsPart = raw['word/_rels/document.xml.rels']
+  const xml = Buffer.from(document).toString('utf8')
+  const relsXml = relsPart ? Buffer.from(relsPart).toString('utf8') : ''
+  const rels = new Map<string, { target: string; external: boolean }>()
+  for (const tag of relsXml.match(/<Relationship\b[^>]*>/g) ?? []) {
+    const id = /Id="([^"]+)"/.exec(tag)?.[1]
+    const target = /Target="([^"]+)"/.exec(tag)?.[1]
+    if (!id || !target) continue
+    const external = /TargetMode="External"/i.test(tag)
+    rels.set(id, { target, external })
+  }
+  const referenced = new Set<string>()
+  for (const match of xml.matchAll(/r:(?:id|embed|link)="([^"]+)"/g)) referenced.add(match[1]!)
+  const issues: RelationshipIssue[] = []
+  for (const id of referenced) if (!rels.has(id)) issues.push({ code: 'E_DOC_REL_UNRESOLVED', detail: `document.xml references ${id} with no relationship` })
+  let external = 0
+  for (const [id, rel] of rels) {
+    if (rel.external) { external += 1; continue }
+    const part = rel.target.startsWith('/') ? rel.target.slice(1) : `word/${rel.target.replace(/^\.\//, '')}`
+    if (!raw[part]) issues.push({ code: 'E_DOC_REL_MISSING_PART', detail: `${id} points at missing part ${part}` })
+  }
+  return { relationships: rels.size, referenced: referenced.size, external, issues }
+}
