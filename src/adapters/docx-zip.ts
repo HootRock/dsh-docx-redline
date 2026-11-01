@@ -184,3 +184,29 @@ export function replaceExactText(buffer: Buffer, find: string, replace: string):
   raw['word/document.xml'] = new TextEncoder().encode(next)
   return { buffer: Buffer.from(zipSync(raw)), replacements: 1 }
 }
+
+export interface RevisionSummary {
+  insertions: number
+  deletions: number
+  authors: Record<string, number>
+  total: number
+}
+/**
+ * Count tracked revisions in word/document.xml (OOXML WML: w:ins / w:del and their w:author).
+ * Read-only; it does not accept or reject changes.
+ */
+export function revisionSummary(buffer: Buffer): RevisionSummary {
+  const raw = unzipSync(buffer)
+  const document = raw['word/document.xml']
+  if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
+  const xml = Buffer.from(document).toString('utf8')
+  const ins = [...xml.matchAll(/<w:ins\b[^>]*>/g)]
+  const del = [...xml.matchAll(/<w:del\b[^>]*>/g)]
+  const authors: Record<string, number> = {}
+  for (const tag of [...ins, ...del]) {
+    const m = /w:author="([^"]*)"/.exec(tag[0])
+    const name = (m?.[1] ?? '(unknown)').slice(0, 80)
+    authors[name] = (authors[name] ?? 0) + 1
+  }
+  return { insertions: ins.length, deletions: del.length, authors, total: ins.length + del.length }
+}

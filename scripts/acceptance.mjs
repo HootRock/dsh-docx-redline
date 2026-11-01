@@ -8,6 +8,7 @@ import path from 'node:path'
 import { strToU8, zipSync } from 'fflate'
 import { createTools } from '../lib/plugin/tools.js'
 import { DocxError } from '../lib/core/docx.js'
+import { revisionSummary } from '../lib/adapters/docx-zip.js'
 
 class FakeTable {
   map = new Map()
@@ -97,10 +98,20 @@ try {
   await rm(dir, { recursive: true, force: true })
 }
 
+const revXml = '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'
+  + '<w:p><w:ins w:id="1" w:author="A"><w:r><w:t>added</w:t></w:r></w:ins></w:p>'
+  + '<w:p><w:del w:id="2" w:author="B"><w:r><w:delText>removed</w:delText></w:r></w:del></w:p>'
+  + '<w:p><w:ins w:id="3" w:author="A"><w:r><w:t>again</w:t></w:r></w:ins></w:p></w:body></w:document>'
+const revBuf = Buffer.from(zipSync({
+  '[Content_Types].xml': strToU8('<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>'),
+  'word/document.xml': strToU8(revXml),
+}))
+const rev = revisionSummary(revBuf)
 const metrics = [
   { req_id: 'SKU-01-A01', metric: '无改动往返通过率（20 合成）', threshold: '100%', actual: roundtripPass / 20, pass: roundtripPass === 20, counted: false },
   { req_id: 'SKU-01-A02', metric: '结构覆盖（6 类）', threshold: '6/6', actual: coverage.size, pass: coverage.size === 6, counted: false },
   { req_id: 'SKU-01-A03', metric: '畸形拒绝率（5 份）', threshold: '100%', actual: malformedRejected / 5, pass: malformedRejected === 5, counted: false },
+  { req_id: 'SKU-01-A04', metric: '修订统计（w:ins/w:del）', threshold: '2/1', actual: `${rev.insertions}/${rev.deletions}`, pass: rev.insertions === 2 && rev.deletions === 1 && rev.authors.A === 2, counted: false },
 ]
 const result = {
   run_id: runId,

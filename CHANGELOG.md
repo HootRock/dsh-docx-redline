@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.0-alpha.10] — 2026-11-01
+
+### Added
+
+- `doc.change_summary`: tracked-revision summary for a local DOCX — insertion/deletion counts and per-author totals from OOXML WML `w:ins` / `w:del`. Read-only; it does not accept or reject revisions. Verified by `node --test test/*.test.mjs` (18/18).
+
 ## [0.1.0-alpha.9] — 2026-11-01
 
 ### Changed

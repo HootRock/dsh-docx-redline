@@ -6,7 +6,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { DocxError, type DocxStructure } from '../core/docx.js'
-import { docxPartHashes, inspectDocx, paragraphTexts, replaceExactText } from '../adapters/docx-zip.js'
+import { docxPartHashes, inspectDocx, paragraphTexts, replaceExactText, revisionSummary } from '../adapters/docx-zip.js'
 import {
   emptyDocxRecord,
   newDocId,
@@ -282,5 +282,17 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  return [inspect, roundtrip, diff, replaceText]
+  const changeSummary = defineTool({
+    name: 'doc.change_summary',
+    description: 'Count tracked revisions in a local DOCX (OOXML WML w:ins / w:del and their authors). Read-only; it does not accept or reject changes.',
+    parameters: { path: { type: 'string', required: true, description: 'Local .docx path under the configured input roots' } },
+    output: { schema: { type: 'object', additionalProperties: false, properties: { insertions: { type: 'number', required: true }, deletions: { type: 'number', required: true }, total: { type: 'number', required: true }, authors: { type: 'json', required: true } } }, render: (_a, v) => text(`revisions ${v.total} (ins ${v.insertions} / del ${v.deletions})`) },
+    async execute(args) {
+      const resolved = await resolveAllowedPath(args.path, deps.inputRoots)
+      const buffer = await readFile(resolved)
+      return revisionSummary(buffer)
+    },
+  })
+
+  return [inspect, roundtrip, diff, replaceText, changeSummary]
 }

@@ -1,0 +1,14 @@
+[
+  {
+    "path": "docs/assets/dsh-docx-redline-capability.png",
+    "kind": "capability",
+    "alt": "dsh-docx-redline real test run",
+    "caption": "Real command: node --test test/change-summary.test.mjs — 2 tests passed, 0 failed (tracked insertions/deletions and per-author totals). Run 2026-11-01; the image is rendered from the captured terminal output."
+  },
+  {
+    "path": "docs/assets/dsh-docx-redline-flow.svg",
+    "kind": "flow",
+    "alt": "dsh-docx-redline flow diagram",
+    "caption": "Pipeline diagram, schematic not test evidence."
+  }
+]
