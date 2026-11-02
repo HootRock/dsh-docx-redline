@@ -75,7 +75,7 @@ dsh plugin --profile <profile> add dsh-docx-redline
 3. **能处理我的文件吗？** 能，标准 `.docx`（Word/WPS 另存）。全程本机运行，不联网、不上传；`.doc`（97-2003 二进制）、PDF、加密文档不支持。
 4. **会改坏我的文档吗？** 不会改原文件：`doc.replace_text` 只写 `outputs/` 下的新文件，且要求待替换文本在全文**唯一**，否则直接失败。
 
-**版本**：0.1.0-alpha.13（alpha，`counted=false`，非 GA）。测试：`node --test test/*.test.mjs` 通过 28 项、失败 0；验收见 `ACCEPTANCE.csv`。
+**版本**：0.1.0-alpha.14（alpha，`counted=false`，非 GA）。测试：`node --test test/*.test.mjs` 通过 28 项、失败 0；验收见 `ACCEPTANCE.csv`。
 
 ## 安装
 
