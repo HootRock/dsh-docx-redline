@@ -1,6 +1,27 @@
 # Changelog
 
-## [0.1.0-alpha.11] — 2026-11-01
+## [0.1.0-alpha.12] — 2026-11-01
+
+### Security / Fixes
+
+- Pre-extraction limits on every zip read (entry count, per-entry and total size, compression ratio), function-form text replacement that cannot inject OOXML, and part-wise roundtrip verification instead of a self-comparing hash.
+
+
+### Security
+
+- Every DOCX read now goes through `safeUnzip()` with pre-decompression limits (1000 entries, 4MB per entry, 32MB total, 100:1 compression above 1MB) and throws `E_DOC_ZIP_LIMIT`; actual sizes are re-checked after inflate. This covers all six former `unzipSync` call sites.
+- `doc.replace_text` uses a function replacement so `$&`, `$1` and `` $` `` stay literal, validates the generated WML with `XMLValidator`/`XMLParser`, and fails before writing.
+- `doc.roundtrip` now unpacks both packages and compares every part instead of treating whole-file SHA equality as proof; the output and stored record add `extra_parts`.
+
+### Changed
+
+- READMEs, package description and architecture docs now say "part-wise identical" instead of "byte-exact".
+
+### Tests
+
+- Added `test/security.test.mjs` (5.5KB/5MB ZIP bomb, all six readers, three replacement payloads, part-wise roundtrip). `node --test test/*.test.mjs`: 27/27.
+
+## [Unreleased]
 
 ### Added
 

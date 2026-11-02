@@ -33,6 +33,7 @@ const roundtripSchema = z.object({
   zero_diff: z.boolean(),
   parts_compared: z.number().int().nonnegative(),
   missing_parts: z.array(z.string()),
+  extra_parts: z.array(z.string()).default([]),
   hash_mismatch: z.array(z.string()),
   checked_at: z.string(),
 })

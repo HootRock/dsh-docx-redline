@@ -55,6 +55,17 @@ export const DOCX_PART_LIMIT = 5000
 export const DOCX_UNCOMPRESSED_LIMIT = 100 * 1024 * 1024
 export const DOCX_PART_SIZE_LIMIT = 50 * 1024 * 1024
 
+/**
+ * Pre-decompression guards applied by every DOCX read in the adapter.
+ * They are deliberately stricter than the post-decompression assertions above:
+ * a ZIP bomb must be rejected before fflate inflates a single oversized entry.
+ */
+export const DOCX_ZIP_ENTRY_LIMIT = 1000
+export const DOCX_ZIP_ENTRY_SIZE_LIMIT = 4 * 1024 * 1024
+export const DOCX_ZIP_TOTAL_SIZE_LIMIT = 32 * 1024 * 1024
+export const DOCX_ZIP_RATIO_LIMIT = 100
+export const DOCX_ZIP_RATIO_MIN_BYTES = 1 * 1024 * 1024
+
 export function assertDocxPartLimits(parts: Array<{ name: string; size: number }>): void {
   if (parts.length > DOCX_PART_LIMIT) throw new DocxError('E_DOC_ZIP_LIMIT', `too many parts: ${parts.length}`)
   let total = 0

@@ -162,7 +162,7 @@ export function createTools(deps: ToolDeps) {
 
   const roundtrip = defineTool({
     name: 'doc.roundtrip',
-    description: 'Copy an inspected DOCX byte-for-byte and compare all part hashes; returns a zero-diff report. Local R1 write; no XML/OOXML generation.',
+    description: 'Copy an inspected DOCX to a new file, unpack both packages and compare every part hash; returns a part-wise identical report. Local R1 write; no XML/OOXML generation.',
     parameters: {
       doc_id: { type: 'string', required: true },
     },
@@ -177,10 +177,11 @@ export function createTools(deps: ToolDeps) {
           zero_diff: { type: 'boolean', required: true },
           parts_compared: { type: 'number', required: true },
           missing_parts: { type: 'array', items: { type: 'string' }, required: true },
+          extra_parts: { type: 'array', items: { type: 'string' }, required: true },
           hash_mismatch: { type: 'array', items: { type: 'string' }, required: true },
         },
       },
-      render: (_args, value) => text(`roundtrip ${value.doc_id}: ${value.zero_diff ? 'zero-diff' : 'DIFF'} (${value.parts_compared} parts)`),
+      render: (_args, value) => text(`roundtrip ${value.doc_id}: ${value.zero_diff ? 'part-wise identical' : 'DIFF'} (${value.parts_compared} parts)`),
     },
     async execute(args) {
       const record = deps.table.get(args.doc_id)
@@ -191,13 +192,16 @@ export function createTools(deps: ToolDeps) {
       await mkdir(outDir, { recursive: true })
       const outPath = path.join(outDir, `${record.doc_id}.docx`)
       await writeFile(outPath, buffer)
+      // Unpack what was actually written and compare every part. Whole-file SHA equality is
+      // not used as proof: reading back our own copy would only compare the copy with itself.
       const output = await readFile(outPath)
       const outputSha = sha256Buffer(output)
       const inputParts = docxPartHashes(buffer)
       const outputParts = docxPartHashes(output)
       const missingParts = [...inputParts.keys()].filter((name) => !outputParts.has(name))
+      const extraParts = [...outputParts.keys()].filter((name) => !inputParts.has(name))
       const hashMismatch = [...inputParts.entries()].filter(([name, hash]) => outputParts.get(name) !== hash).map(([name]) => name)
-      const zeroDiff = inputSha === outputSha && missingParts.length === 0 && hashMismatch.length === 0
+      const zeroDiff = missingParts.length === 0 && extraParts.length === 0 && hashMismatch.length === 0
       const updated: DocxRecord = {
         ...record,
         lifecycle: zeroDiff ? 'roundtripped' : 'failed',
@@ -207,6 +211,7 @@ export function createTools(deps: ToolDeps) {
           zero_diff: zeroDiff,
           parts_compared: inputParts.size,
           missing_parts: missingParts,
+          extra_parts: extraParts,
           hash_mismatch: hashMismatch,
           checked_at: new Date().toISOString(),
         },
@@ -220,6 +225,7 @@ export function createTools(deps: ToolDeps) {
         zero_diff: zeroDiff,
         parts_compared: inputParts.size,
         missing_parts: missingParts,
+        extra_parts: extraParts,
         hash_mismatch: hashMismatch,
       }
     },

@@ -1,7 +1,12 @@
 import { createHash } from 'node:crypto'
 import { unzipSync, zipSync } from 'fflate'
-import { XMLParser } from 'fast-xml-parser'
+import { XMLParser, XMLValidator } from 'fast-xml-parser'
 import {
+  DOCX_ZIP_ENTRY_LIMIT,
+  DOCX_ZIP_ENTRY_SIZE_LIMIT,
+  DOCX_ZIP_RATIO_LIMIT,
+  DOCX_ZIP_RATIO_MIN_BYTES,
+  DOCX_ZIP_TOTAL_SIZE_LIMIT,
   DocxError,
   assertDocxPartLimits,
   emptyDocxStructure,
@@ -19,6 +24,62 @@ const parser = new XMLParser({
   processEntities: false,
   allowBooleanAttributes: false,
 })
+
+/**
+ * The single unzip entry point for this adapter.
+ *
+ * The filter runs before fflate inflates an entry, so oversized entries, too many
+ * entries and classic high-ratio ZIP bombs are rejected without allocating their
+ * uncompressed bytes. Declared sizes come from the ZIP central directory; the
+ * actual entry lengths are checked again afterwards because a directory can lie.
+ */
+export function safeUnzip(buffer: Buffer | Uint8Array): Record<string, Uint8Array> {
+  let count = 0
+  let declaredTotal = 0
+  let entries: Record<string, Uint8Array>
+  try {
+    entries = unzipSync(buffer, {
+      filter(file) {
+        count += 1
+        if (count > DOCX_ZIP_ENTRY_LIMIT) {
+          throw new DocxError('E_DOC_ZIP_LIMIT', `too many zip entries: more than ${DOCX_ZIP_ENTRY_LIMIT}`)
+        }
+        const originalSize = file.originalSize
+        const compressedSize = file.size
+        if (!Number.isFinite(originalSize) || originalSize < 0) {
+          throw new DocxError('E_DOC_ZIP_LIMIT', `zip entry has an invalid size: ${file.name}`)
+        }
+        if (originalSize > DOCX_ZIP_ENTRY_SIZE_LIMIT) {
+          throw new DocxError('E_DOC_ZIP_LIMIT', `zip entry too large: ${file.name} (${originalSize} bytes)`)
+        }
+        declaredTotal += originalSize
+        if (declaredTotal > DOCX_ZIP_TOTAL_SIZE_LIMIT) {
+          throw new DocxError('E_DOC_ZIP_LIMIT', `uncompressed zip size exceeds ${DOCX_ZIP_TOTAL_SIZE_LIMIT} bytes`)
+        }
+        if (originalSize > DOCX_ZIP_RATIO_MIN_BYTES) {
+          if (compressedSize <= 0 || originalSize / compressedSize > DOCX_ZIP_RATIO_LIMIT) {
+            throw new DocxError('E_DOC_ZIP_LIMIT', `zip entry compression ratio is too high: ${file.name}`)
+          }
+        }
+        return true
+      },
+    }) as Record<string, Uint8Array>
+  } catch (error) {
+    if (error instanceof DocxError) throw error
+    throw new DocxError('E_DOC_UNREADABLE', 'not a readable DOCX/ZIP')
+  }
+  let actualTotal = 0
+  for (const [name, bytes] of Object.entries(entries)) {
+    if (bytes.length > DOCX_ZIP_ENTRY_SIZE_LIMIT) {
+      throw new DocxError('E_DOC_ZIP_LIMIT', `zip entry too large after decompression: ${name}`)
+    }
+    actualTotal += bytes.length
+    if (actualTotal > DOCX_ZIP_TOTAL_SIZE_LIMIT) {
+      throw new DocxError('E_DOC_ZIP_LIMIT', `uncompressed zip size exceeds ${DOCX_ZIP_TOTAL_SIZE_LIMIT} bytes after decompression`)
+    }
+  }
+  return entries
+}
 
 function sha256(bytes: Uint8Array): string {
   return createHash('sha256').update(bytes).digest('hex')
@@ -98,12 +159,7 @@ function inspectFootnotes(xml: string | undefined, structure: DocxStructure): vo
 
 export function inspectDocx(buffer: Buffer): DocxInspection {
   if (buffer.length === 0) throw new DocxError('E_DOC_FILE_UNREADABLE', 'empty file')
-  let raw: Record<string, Uint8Array>
-  try {
-    raw = unzipSync(buffer)
-  } catch {
-    throw new DocxError('E_DOC_UNREADABLE', 'not a readable DOCX/ZIP')
-  }
+  const raw = safeUnzip(buffer)
   const entries = Object.entries(raw).filter(([name]) => !name.endsWith('/'))
   assertDocxPartLimits(entries.map(([name, bytes]) => ({ name, size: bytes.length })))
   const parts = new Map(entries)
@@ -137,7 +193,7 @@ export function docxContentHash(buffer: Buffer): string {
 }
 
 export function paragraphTexts(buffer: Buffer): string[] {
-  const raw = unzipSync(buffer)
+  const raw = safeUnzip(buffer)
   const document = raw['word/document.xml']
   if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
   const root = parseXml(Buffer.from(document).toString('utf8'))
@@ -165,14 +221,28 @@ export function paragraphTexts(buffer: Buffer): string[] {
 }
 
 export function docxPartHashes(buffer: Buffer): Map<string, string> {
-  const raw = unzipSync(buffer)
+  const raw = safeUnzip(buffer)
   return new Map(Object.entries(raw).filter(([name]) => !name.endsWith('/')).map(([name, bytes]) => [name, sha256(bytes)]))
 }
 
 
+/** Fail closed before writing: the generated WML must be well-formed and parseable. */
+function assertParsableWml(xml: string): void {
+  const validation = XMLValidator.validate(xml)
+  if (validation !== true) {
+    const detail = `${validation.err.code} at line ${validation.err.line}: ${validation.err.msg}`
+    throw new DocxError('E_DOC_WRITE_UNSUPPORTED', `generated word/document.xml is not well-formed (${detail})`)
+  }
+  try {
+    parser.parse(xml)
+  } catch {
+    throw new DocxError('E_DOC_WRITE_UNSUPPORTED', 'generated word/document.xml is not parseable')
+  }
+}
+
 export function replaceExactText(buffer: Buffer, find: string, replace: string): { buffer: Buffer; replacements: number } {
   if (!find) throw new DocxError('E_DOC_WRITE_UNSUPPORTED', 'find must not be empty')
-  const raw = unzipSync(buffer)
+  const raw = safeUnzip(buffer)
   const document = raw['word/document.xml']
   if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
   const xml = Buffer.from(document).toString('utf8')
@@ -180,7 +250,10 @@ export function replaceExactText(buffer: Buffer, find: string, replace: string):
   const needle = new RegExp(`(<w:t(?:\\s[^>]*)?>)${escape(find).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(</w:t>)`, 'g')
   const matches = [...xml.matchAll(needle)]
   if (matches.length !== 1) throw new DocxError('E_DOC_WRITE_UNSUPPORTED', `expected exactly one text match, found ${matches.length}`)
-  const next = xml.replace(needle, `$1${escape(replace)}$2`)
+  // Function replacement: "$&", "$1" and "$`" in user input stay literal text instead of
+  // being interpreted as String.replace substitution patterns.
+  const next = xml.replace(needle, (_match: string, prefix: string, suffix: string) => `${prefix}${escape(replace)}${suffix}`)
+  assertParsableWml(next)
   raw['word/document.xml'] = new TextEncoder().encode(next)
   return { buffer: Buffer.from(zipSync(raw)), replacements: 1 }
 }
@@ -196,7 +269,7 @@ export interface RevisionSummary {
  * Read-only; it does not accept or reject changes.
  */
 export function revisionSummary(buffer: Buffer): RevisionSummary {
-  const raw = unzipSync(buffer)
+  const raw = safeUnzip(buffer)
   const document = raw['word/document.xml']
   if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
   const xml = Buffer.from(document).toString('utf8')
@@ -224,7 +297,7 @@ export interface RelationshipReport {
  * Read-only; clean-room from the ECMA-376 / ISO-IEC 29500 package model.
  */
 export function relationshipCheck(buffer: Buffer): RelationshipReport {
-  const raw = unzipSync(buffer)
+  const raw = safeUnzip(buffer)
   const document = raw['word/document.xml']
   if (!document) throw new DocxError('E_DOC_UNREADABLE', 'missing word/document.xml')
   const relsPart = raw['word/_rels/document.xml.rels']
