@@ -1,6 +1,6 @@
 {
   "name": "dsh-docx-redline",
-  "version": "0.1.0-alpha.13",
+  "version": "0.1.0-alpha.14",
   "description": "DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -28,11 +28,27 @@
     "CODE_OF_CONDUCT.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
-    "icon.svg"
+    "icon.svg",
+    "samples",
+    "TROUBLESHOOTING.md"
   ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "demo": {
+      "sample": "samples/quickstart/input/contract-v1.docx",
+      "prompt": "帮我核对自带样例的合同初稿结构，再和定稿比一比，看改了哪几段、有几处修订。",
+      "expect": "samples/quickstart/expected/result.json",
+      "screenshot": "docs/assets/quickstart.png",
+      "reads": [
+        "用户指定的 .docx 文件"
+      ],
+      "writes": [
+        "$DSH_HOME/storages/dsh-docx-redline"
+      ],
+      "network": false,
+      "external": []
     }
   },
   "engines": {

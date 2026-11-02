@@ -1,0 +1,105 @@
+{
+  "_note": "Real tool output. doc ids are random per run, so they are normalised to DOC-1/DOC-2 here; every other value is verbatim. The roundtrip copies live in a temp dir, so only the compared result is recorded.",
+  "samples": [
+    {
+      "path": "samples/quickstart/input/contract-v1.docx",
+      "bytes": 3760,
+      "sha256": "7dbae885836ab62b8eba50b246a48e86926d869c24a8f21308f7e01902a17567"
+    },
+    {
+      "path": "samples/quickstart/input/contract-v2.docx",
+      "bytes": 3904,
+      "sha256": "d196725e2c8f9bb7b3e45788b59dae78cd29db4e2eac2ff6dab7bc440ab76d4c"
+    }
+  ],
+  "inspect": [
+    {
+      "doc": "DOC-1",
+      "sha256": "7dbae885836ab62b8eba50b246a48e86926d869c24a8f21308f7e01902a17567",
+      "size": 3760,
+      "parts_count": 9,
+      "structure": {
+        "paragraphs": 11,
+        "tables": 1,
+        "table_rows": 2,
+        "table_cells": 4,
+        "headers": 1,
+        "footers": 1,
+        "footnotes": 0,
+        "comments": 1,
+        "fields": 1,
+        "bookmarks": 1,
+        "numbered_paragraphs": 1,
+        "sections": 1,
+        "styles": 2
+      },
+      "warnings": []
+    },
+    {
+      "doc": "DOC-2",
+      "sha256": "d196725e2c8f9bb7b3e45788b59dae78cd29db4e2eac2ff6dab7bc440ab76d4c",
+      "size": 3904,
+      "parts_count": 9,
+      "structure": {
+        "paragraphs": 12,
+        "tables": 1,
+        "table_rows": 2,
+        "table_cells": 4,
+        "headers": 1,
+        "footers": 1,
+        "footnotes": 0,
+        "comments": 1,
+        "fields": 1,
+        "bookmarks": 1,
+        "numbered_paragraphs": 1,
+        "sections": 1,
+        "styles": 2
+      },
+      "warnings": []
+    }
+  ],
+  "relationships": {
+    "relationships": 6,
+    "referenced": 3,
+    "external": 1,
+    "issues": []
+  },
+  "roundtrip": {
+    "doc": "DOC-1",
+    "zero_diff": true,
+    "parts_compared": 9,
+    "missing_parts": [],
+    "extra_parts": [],
+    "hash_mismatch": []
+  },
+  "change_summary": {
+    "doc": "DOC-2",
+    "insertions": 2,
+    "deletions": 1,
+    "total": 3,
+    "authors": {
+      "张三": 2,
+      "李四": 1
+    }
+  },
+  "diff": {
+    "base": "DOC-1",
+    "target": "DOC-2",
+    "added": 2,
+    "removed": 1,
+    "hunks": [
+      {
+        "op": "remove",
+        "text": "第二条 合同金额：人民币 120,000 元（含税）。"
+      },
+      {
+        "op": "add",
+        "text": "第二条 合同金额：人民币 150,000 元（含税）。"
+      },
+      {
+        "op": "add",
+        "text": "第四条 保密条款：双方对合同内容保密，期限三年。"
+      }
+    ]
+  }
+}

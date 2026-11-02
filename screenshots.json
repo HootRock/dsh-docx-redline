@@ -1,5 +1,16 @@
 [
   {
+    "path": "docs/assets/quickstart.png",
+    "kind": "quickstart",
+    "alt": "dsh-docx-redline quickstart terminal run",
+    "caption": "Real command: node samples/quickstart/run.mjs — 6 tool calls on the two shipped synthetic DOCX files (structure, part-wise roundtrip, tracked revisions, paragraph diff). The image is a 1:1 render of samples/quickstart/expected/console.txt; nothing was re-typed.",
+    "command": "node samples/quickstart/run.mjs",
+    "run_at": "2026-11-02T20:35:39+08:00",
+    "output_sha256": "fcc7374dcee0befc23a1b8a16b7a3cdb9aad11d41c02ef42e1dce77201728ac2",
+    "log_sha256": "8d00736e6eac7752e522f1c7b035208bb42411772cbc0ad398ccfa90921e4fda",
+    "render": "scripts/render-capture.py samples/quickstart/expected/console.txt docs/assets/quickstart.png (CJK-capable font via RENDER_CAPTURE_FONT)"
+  },
+  {
     "path": "docs/assets/dsh-docx-redline-capability.png",
     "kind": "capability",
     "alt": "dsh-docx-redline real test run",

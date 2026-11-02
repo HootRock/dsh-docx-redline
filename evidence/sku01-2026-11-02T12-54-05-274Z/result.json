@@ -1,0 +1,163 @@
+{
+  "run_id": "sku01-2026-11-02T12-54-05-274Z",
+  "timestamp": "2026-11-02T12:54:07.483Z",
+  "scope": "SKU-01-S1",
+  "status": "partial",
+  "counted": false,
+  "note": "synthetic only; user-approved public/synthetic demo; 0 real DOCX pairs",
+  "samples": [
+    {
+      "name": "sample-0",
+      "sha256": "f2a8332ef592570d50104ef814bdd865c3381b787083349959163f9146561de7",
+      "parts": 9
+    },
+    {
+      "name": "sample-1",
+      "sha256": "668ee9b0f4dfca9d7f2ad2ca467f6806a2ae6a9d3fc5efb3826e730dff278331",
+      "parts": 9
+    },
+    {
+      "name": "sample-2",
+      "sha256": "f4aa7dc6e03682419edea48013e6187ce954470541ab8566a0da582446e29724",
+      "parts": 9
+    },
+    {
+      "name": "sample-3",
+      "sha256": "59bc3588de2b2f04fad4393519b4828576f0b861ebaa033c91c612055fc4604c",
+      "parts": 9
+    },
+    {
+      "name": "sample-4",
+      "sha256": "3a61eb7b60b208581c7a0b5beef7e1ea7d18da7a5eae7f3921d7eca0332e37b8",
+      "parts": 9
+    },
+    {
+      "name": "sample-5",
+      "sha256": "668ee9b0f4dfca9d7f2ad2ca467f6806a2ae6a9d3fc5efb3826e730dff278331",
+      "parts": 9
+    },
+    {
+      "name": "sample-6",
+      "sha256": "f1d0a9060b53f1eb8f5ce7894bf8797ee4162b94dc42a9c987f4bf1f93427141",
+      "parts": 9
+    },
+    {
+      "name": "sample-7",
+      "sha256": "b1609cf351c2e1cc7ffb6e449af3b65fecf4ee338856af9382fb5cfdf436867b",
+      "parts": 9
+    },
+    {
+      "name": "sample-8",
+      "sha256": "3a61eb7b60b208581c7a0b5beef7e1ea7d18da7a5eae7f3921d7eca0332e37b8",
+      "parts": 9
+    },
+    {
+      "name": "sample-9",
+      "sha256": "170cb0d6bf02d5e527dffbbc3fed3deb82f32255ca121fb95e0e678432d3b81a",
+      "parts": 9
+    },
+    {
+      "name": "sample-10",
+      "sha256": "f4aa7dc6e03682419edea48013e6187ce954470541ab8566a0da582446e29724",
+      "parts": 9
+    },
+    {
+      "name": "sample-11",
+      "sha256": "b1609cf351c2e1cc7ffb6e449af3b65fecf4ee338856af9382fb5cfdf436867b",
+      "parts": 9
+    },
+    {
+      "name": "sample-12",
+      "sha256": "f2a8332ef592570d50104ef814bdd865c3381b787083349959163f9146561de7",
+      "parts": 9
+    },
+    {
+      "name": "sample-13",
+      "sha256": "668ee9b0f4dfca9d7f2ad2ca467f6806a2ae6a9d3fc5efb3826e730dff278331",
+      "parts": 9
+    },
+    {
+      "name": "sample-14",
+      "sha256": "f4aa7dc6e03682419edea48013e6187ce954470541ab8566a0da582446e29724",
+      "parts": 9
+    },
+    {
+      "name": "sample-15",
+      "sha256": "59bc3588de2b2f04fad4393519b4828576f0b861ebaa033c91c612055fc4604c",
+      "parts": 9
+    },
+    {
+      "name": "sample-16",
+      "sha256": "3a61eb7b60b208581c7a0b5beef7e1ea7d18da7a5eae7f3921d7eca0332e37b8",
+      "parts": 9
+    },
+    {
+      "name": "sample-17",
+      "sha256": "668ee9b0f4dfca9d7f2ad2ca467f6806a2ae6a9d3fc5efb3826e730dff278331",
+      "parts": 9
+    },
+    {
+      "name": "sample-18",
+      "sha256": "f1d0a9060b53f1eb8f5ce7894bf8797ee4162b94dc42a9c987f4bf1f93427141",
+      "parts": 9
+    },
+    {
+      "name": "sample-19",
+      "sha256": "b1609cf351c2e1cc7ffb6e449af3b65fecf4ee338856af9382fb5cfdf436867b",
+      "parts": 9
+    }
+  ],
+  "metrics": [
+    {
+      "req_id": "SKU-01-A01",
+      "metric": "无改动往返通过率（20 合成）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A02",
+      "metric": "结构覆盖（6 类）",
+      "threshold": "6/6",
+      "actual": 6,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A03",
+      "metric": "畸形拒绝率（5 份）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A04",
+      "metric": "修订统计（w:ins/w:del）",
+      "threshold": "2/1",
+      "actual": "2/1",
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A05",
+      "metric": "OOXML 关系完整性",
+      "threshold": "0 issues",
+      "actual": 0,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "PS1-QS01",
+      "metric": "quickstart 样例与金标一致",
+      "threshold": "1/1",
+      "actual": 1,
+      "pass": true,
+      "evidence_sha256": "1271d470260bec05ea4e2bf2916fb07305e9e4b540ebf65af17a9c9924dcda30",
+      "source": "synthetic/quickstart",
+      "counted": true
+    }
+  ],
+  "pass": true
+}

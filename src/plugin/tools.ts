@@ -41,7 +41,7 @@ async function resolveAllowedPath(inputPath: string, roots: string[]): Promise<s
   try {
     resolved = await realpath(path.resolve(inputPath))
   } catch {
-    throw new DocxError('E_DOC_FILE_UNREADABLE', `cannot resolve: ${inputPath}`)
+    throw new DocxError('E_DOC_FILE_UNREADABLE', `找不到这个文件（E_DOC_FILE_UNREADABLE）｜下一步：确认路径存在，或先用自带样例 samples/quickstart/input/contract-v1.docx`)
   }
   const resolvedRoots = await Promise.all(
     roots.map(async (root) => {
@@ -53,7 +53,7 @@ async function resolveAllowedPath(inputPath: string, roots: string[]): Promise<s
     }),
   )
   const allowed = resolvedRoots.some((root) => root !== undefined && (resolved === root || resolved.startsWith(root + path.sep)))
-  if (!allowed) throw new DocxError('E_DOC_PATH_NOT_ALLOWED', `path is outside configured roots: ${inputPath}`)
+  if (!allowed) throw new DocxError('E_DOC_PATH_NOT_ALLOWED', `这个路径不在允许的输入目录里（E_DOC_PATH_NOT_ALLOWED）｜下一步：把文件放进输入根目录，或设置 DSH_DOCX_INPUT_ROOTS`)
   return resolved
 }
 
@@ -185,7 +185,7 @@ export function createTools(deps: ToolDeps) {
     },
     async execute(args) {
       const record = deps.table.get(args.doc_id)
-      if (!record) throw new DocxError('E_DOC_DOC_NOT_FOUND', `unknown doc_id: ${args.doc_id}`)
+      if (!record) throw new DocxError('E_DOC_DOC_NOT_FOUND', `找不到这份文档记录（E_DOC_DOC_NOT_FOUND）｜下一步：先用 doc.inspect 读一次，再拿返回的 doc_id 继续`)
       const buffer = await readFile(record.source_path)
       const inputSha = sha256Buffer(buffer)
       const outDir = path.join(deps.baseDir, 'roundtrip')

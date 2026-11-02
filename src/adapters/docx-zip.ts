@@ -206,7 +206,16 @@ export function paragraphTexts(buffer: Buffer): string[] {
     let text = ''
     if (object.t !== undefined) text += collect(object.t)
     if (object['#text'] !== undefined) text += String(object['#text'])
-    for (const [key, child] of Object.entries(object)) if (key !== 't' && key !== '#text') text += collect(child)
+    for (const [key, child] of Object.entries(object)) {
+      // Attribute values (w:val, w:id, r:id, w:instr, ...) are metadata, not document text.
+      // Paragraph/run properties carry no readable text either; skipping both keeps
+      // paragraph-level diff output equal to what a reader sees in Word.
+      if (key === 't' || key === '#text' || key.startsWith('@_')) continue
+      if (key === 'pPr' || key === 'rPr') continue
+      // Tracked deletions are no longer part of the current text.
+      if (key === 'del') continue
+      text += collect(child)
+    }
     return text
   }
   const visit = (value: unknown): void => {

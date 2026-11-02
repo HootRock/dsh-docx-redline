@@ -15,7 +15,7 @@
 [![Node](https://img.shields.io/badge/node-24.9%2B-brightgreen)](#)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-docx-redline)](https://www.npmjs.com/package/dsh-docx-redline)
 
-**DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。**
+**DOCX 结构检查、逐部件一致 roundtrip 与单 run 文本替换。**
 
 > **状态：alpha / 公开合成 / partial / not counted / 非 GA。** 不含客户证据、客户数据，也不作生产可用声明。
 
@@ -36,6 +36,46 @@ dsh plugin --profile <profile> add dsh-docx-redline
 ![Workflow diagram for dsh-docx-redline: local input, plugin, local output.](docs/assets/dsh-docx-redline-flow.svg)
 
 *工作流：本地输入 → 插件 → 本地输出；不需要调用模型。*
+
+## 快速了解（3 分钟）
+
+**一句话**：核对 Word 文档的段落/表格/页眉页脚结构，并把两版正文改动的段落逐条比出来。
+
+**适合**：合同、公文两版之间的正文比对；收到 `.docx` 先确认结构是否完整（段落、表格、页眉页脚、批注、域、书签）。
+**不适合**：需要写「修订痕迹 / 接受或拒绝修订」的场景（本包不写 tracked changes）；扫描件 PDF、图片；加密文档。
+
+**输入**：本地 `.docx`（OOXML ZIP 包），单文件建议 ≤50 MB；来自 Word / WPS 另存。
+自带样例：`samples/quickstart/input/contract-v1.docx` 与 `contract-v2.docx`（各约 4 KB，合成合同：虚构主体与金额，无客户文档）。
+
+**输出**：结构计数、逐部件 SHA-256、逐部件一致的 roundtrip 报告、修订统计（`w:ins`/`w:del` 与作者）、段落级差异。除 roundtrip 副本与替换产物外**不改原文件**。
+
+**示例**：把这句话直接发给助手：
+
+> 帮我核对自带样例的合同初稿结构，再和定稿比一比，看改了哪几段、有几处修订。
+
+预期输出（真实运行结果）：`samples/quickstart/expected/result.json`。同一份样例的真实运行截图：
+
+![quickstart](docs/assets/quickstart.png)
+
+**权限**：
+
+```text
+读：用户指定的 .docx 文件；不读其他目录
+写：$DSH_HOME/storages/dsh-docx-redline（原件、roundtrip 副本、outputs/*.docx）；不改原文件
+联网：否
+外部系统：无
+```
+
+以上与源码一致：`apply()` 只从 `DSH_DOCX_HOME`（缺省 `$DSH_HOME/storages/dsh-docx-redline`）取写入目录，源码里没有任何网络调用。会写盘的工具（`doc.inspect` 存原件、`doc.roundtrip`、`doc.replace_text`）标 **R1 本地写**，只读工具（`redline.diff`、`doc.change_summary`、`doc.relationship_check`）标 **R0**。
+
+### FAQ
+
+1. **装不上怎么办？** 先看 `node --version` 是否 ≥24.9、`dsh --version` 是否在 `>=0.2.1-rc.3 <0.4.0`；再跑 `dsh plugin --profile <profile> add dsh-docx-redline`。
+2. **结果不对怎么办？** 先看 `warnings`：缺页眉/页脚/域/书签会单独提示。差异是**段落级文本**比对，不还原字符级修订；被删除的文字（`w:delText`）不计入当前正文。
+3. **能处理我的文件吗？** 能，标准 `.docx`（Word/WPS 另存）。全程本机运行，不联网、不上传；`.doc`（97-2003 二进制）、PDF、加密文档不支持。
+4. **会改坏我的文档吗？** 不会改原文件：`doc.replace_text` 只写 `outputs/` 下的新文件，且要求待替换文本在全文**唯一**，否则直接失败。
+
+**版本**：0.1.0-alpha.13（alpha，`counted=false`，非 GA）。测试：`node --test test/*.test.mjs` 通过 28 项、失败 0；验收见 `ACCEPTANCE.csv`。
 
 ## 安装
 
@@ -64,7 +104,7 @@ dsh plugin --profile <profile> remove dsh-docx-redline
 
 ## 它做什么
 
-DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 在 DeepSeek Harness 本地运行；下表就是实际工具面，示例使用真实命令面。
+DOCX 结构检查、逐部件一致 roundtrip 与单 run 文本替换。 在 DeepSeek Harness 本地运行；下表就是实际工具面，示例使用真实命令面。
 
 输入和输出都留在本地，不上传。
 
@@ -74,10 +114,12 @@ DOCX 结构检查、逐字节 roundtrip 与单 run 文本替换。 在 DeepSeek 
 
 | 工具 | 用途 | 风险 |
 |---|---|---|
-| `doc.inspect` | 读取本地 `.docx` 的 ZIP/XML，保存原始文件，并报告各部件 SHA-256 及结构计数（段落、表格、页眉/页脚、脚注、批注、域、书签、编号、节、样式） | R0 read + local store |
-| `doc.roundtrip` | 逐字节复制原始文件并比对每个部件的哈希；返回零差异报告 | R1 local write |
-| `doc.replace_text` | 替换单个精确匹配的 `w:t` 文本运行；文本不唯一或跨运行时分则失败关闭 | R1 local write |
-| `redline.diff` | 对两个已检查的 DOCX 文件做文本级段落差异比对；不写入 OOXML | R0 |
+| `doc.inspect` | 读取本地 `.docx` 的 ZIP/XML，保存原始文件，并报告各部件 SHA-256 及结构计数（段落、表格、页眉/页脚、脚注、批注、域、书签、编号、节、样式） | R1 本地写（存原件） |
+| `doc.roundtrip` | 复制归档包，解包双方后逐部件比对哈希；返回逐部件一致报告 | R1 本地写 |
+| `doc.replace_text` | 替换单个精确匹配的 `w:t` 文本运行；文本不唯一或跨运行时分则失败关闭 | R1 本地写 |
+| `redline.diff` | 对两个已检查的 DOCX 文件做文本级段落差异比对；不写入 OOXML | R0 只读 |
+| `doc.change_summary` | 统计 `w:ins`/`w:del` 修订数量与作者；不执行接受/拒绝 | R0 只读 |
+| `doc.relationship_check` | 检查 OOXML 包关系：`r:id` 是否声明、内部目标部件是否存在；不修复 | R0 只读 |
 
 ## 快速开始
 
@@ -86,9 +128,23 @@ dsh plugin --profile <profile> add dsh-docx-redline
 dsh --profile <profile> --dump-config | grep dsh-docx-redline
 ```
 
+装上后，把上面「示例」里那句话发给助手即可。在仓库里也可以直接跑同一套工具：
+
+```sh
+pnpm build && node samples/quickstart/run.mjs
+```
+
+它会用 `samples/quickstart/input/contract-v1.docx` 与 `contract-v2.docx` 依次调用 `doc.inspect → doc.relationship_check → doc.roundtrip → doc.change_summary → redline.diff`，并打印结果。
+
 ## 示例
 
-### fixture 支撑的示例
+### 自带样例（合成）
+
+输入: `samples/quickstart/input/contract-v1.docx` / `contract-v2.docx`（`scripts/make-samples.mjs` 用 fflate 从 OOXML 部件组装，虚构主体与金额）
+金标: `samples/quickstart/expected/result.json`（`node samples/quickstart/run.mjs --json` 的输出）
+命令: `pnpm build && node samples/quickstart/run.mjs`
+
+### fixture 支撑的验收
 
 输入: [`fixtures/public/python-docx/blk-containing-table.docx`](https://github.com/PerryLink/dsh-docx-redline/blob/main/fixtures/public/python-docx/blk-containing-table.docx)
 

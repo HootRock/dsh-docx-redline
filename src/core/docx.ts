@@ -43,7 +43,9 @@ export class DocxError extends Error {
   readonly needsReview: boolean
 
   constructor(code: DocxErrorCode, message: string, options: { retryable?: boolean; needsReview?: boolean } = {}) {
-    super(`${code}: ${message}`)
+    // User-facing format: "<human sentence>（E_DOC_…）｜下一步：<one action>".
+    // Do not prefix the code twice when the message already carries it.
+    super(message.includes(code) ? message : `${code}: ${message}`)
     this.name = 'DocxError'
     this.code = code
     this.retryable = options.retryable ?? false

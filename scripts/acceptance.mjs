@@ -2,7 +2,8 @@
 
 import { createHash } from 'node:crypto'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { strToU8, zipSync } from 'fflate'
@@ -109,12 +110,18 @@ const revBuf = Buffer.from(zipSync({
 const rev = revisionSummary(revBuf)
 const relBuf = Buffer.from(zipSync({ '[Content_Types].xml': strToU8('<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>'), 'word/document.xml': strToU8('<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body><w:p><w:hyperlink r:id="rId1"/></w:p></w:body></w:document>'), 'word/_rels/document.xml.rels': strToU8('<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="x" Target="header1.xml"/></Relationships>'), 'word/header1.xml': strToU8('<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>') }))
 const rel = relationshipCheck(relBuf)
+const qs = JSON.parse(execFileSync(process.execPath, ['samples/quickstart/run.mjs', '--json'], { encoding: 'utf8' }))
+const qsGoldText = readFileSync('samples/quickstart/expected/result.json', 'utf8')
+const qsOk = JSON.stringify(qs) === JSON.stringify(JSON.parse(qsGoldText))
+const qsSha = sha256(Buffer.from(qsGoldText))
+
 const metrics = [
   { req_id: 'SKU-01-A01', metric: '无改动往返通过率（20 合成）', threshold: '100%', actual: roundtripPass / 20, pass: roundtripPass === 20, counted: false },
   { req_id: 'SKU-01-A02', metric: '结构覆盖（6 类）', threshold: '6/6', actual: coverage.size, pass: coverage.size === 6, counted: false },
   { req_id: 'SKU-01-A03', metric: '畸形拒绝率（5 份）', threshold: '100%', actual: malformedRejected / 5, pass: malformedRejected === 5, counted: false },
   { req_id: 'SKU-01-A04', metric: '修订统计（w:ins/w:del）', threshold: '2/1', actual: `${rev.insertions}/${rev.deletions}`, pass: rev.insertions === 2 && rev.deletions === 1 && rev.authors.A === 2, counted: false },
   { req_id: 'SKU-01-A05', metric: 'OOXML 关系完整性', threshold: '0 issues', actual: rel.issues.length, pass: rel.issues.length === 0 && rel.referenced === 1 && rel.relationships === 1, counted: false },
+  { req_id: 'PS1-QS01', metric: 'quickstart 样例与金标一致', threshold: '1/1', actual: qsOk ? 1 : 0, pass: qsOk, evidence_sha256: qsSha, source: 'synthetic/quickstart', counted: true },
 ]
 const result = {
   run_id: runId,
@@ -130,7 +137,7 @@ const result = {
 const resultText = `${JSON.stringify(result, null, 2)}\n`
 writeFileSync(path.join(evidenceDir, 'result.json'), resultText)
 const evidenceSha = sha256(resultText)
-const csv = ['req_id,metric,threshold,actual,script,evidence_sha256,pass', ...metrics.map((m) => `${m.req_id},${m.metric},${m.threshold},${m.actual},scripts/acceptance.mjs,${evidenceSha},${m.pass}`)].join('\n') + '\n'
+const csv = ['req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted', ...metrics.map((m) => `${m.req_id},${m.metric},${m.threshold},${m.actual},scripts/acceptance.mjs,${m.evidence_sha256 ?? evidenceSha},${m.pass},${m.source ?? 'public/synthetic'},${m.counted ?? false}`)].join('\n') + '\n'
 writeFileSync(path.join(root, 'ACCEPTANCE.csv'), csv)
 if (!result.pass) {
   console.error(JSON.stringify(result, null, 2))

@@ -15,7 +15,7 @@
 [![Node](https://img.shields.io/badge/node-24.9%2B-brightgreen)](#)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-docx-redline)](https://www.npmjs.com/package/dsh-docx-redline)
 
-**DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace.**
+**DOCX structure inspection, part-wise identical roundtrip and limited exact-run text replace.**
 
 > **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim.
 
@@ -64,7 +64,7 @@ npm is the recommended channel; the others are for pinning or offline use.
 
 ## What it does
 
-DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace. Runs locally on DeepSeek Harness. The table below is the exact tool surface; the examples use the real command surface.
+DOCX structure inspection, part-wise identical roundtrip and limited exact-run text replace. Runs locally on DeepSeek Harness. The table below is the exact tool surface; the examples use the real command surface.
 
 Input and output stay local; nothing is uploaded.
 
@@ -75,7 +75,7 @@ Tool names and descriptions are kept in English to match the runtime output.
 | Tool | Purpose | Risk |
 |---|---|---|
 | `doc.inspect` | Read a local `.docx` ZIP/XML, store the original, and report part SHA-256 plus structure counts (paragraphs, tables, headers/footers, footnotes, comments, fields, bookmarks, numbering, sections, styles) | R0 read + local store |
-| `doc.roundtrip` | Copy the original byte-for-byte and compare every part hash; return a zero-diff report | R1 local write |
+| `doc.roundtrip` | Copy the package, unpack both copies and compare every part hash; return a part-wise identical report | R1 local write |
 | `doc.replace_text` | Replace one exact `w:t` run; fail closed when the text is not unique or spans runs | R1 local write |
 | `redline.diff` | Text-level paragraph diff between two inspected DOCX files; no OOXML writing | R0 |
 
