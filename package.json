@@ -1,6 +1,6 @@
 {
   "name": "dsh-docx-redline",
-  "version": "0.1.0-alpha.12",
+  "version": "0.1.0-alpha.13",
   "description": "DOCX structure inspection, byte-exact roundtrip and limited exact-run text replace.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -98,5 +98,13 @@
   "bugs": {
     "url": "https://github.com/PerryLink/dsh-docx-redline/issues"
   },
-  "icon": "icon.svg"
+  "icon": "icon.svg",
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-storage-domain": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  }
 }

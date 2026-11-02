@@ -1,0 +1,153 @@
+{
+  "run_id": "sku01-2026-11-02T05-42-03-198Z",
+  "timestamp": "2026-11-02T05:42:03.274Z",
+  "scope": "SKU-01-S1",
+  "status": "partial",
+  "counted": false,
+  "note": "synthetic only; user-approved public/synthetic demo; 0 real DOCX pairs",
+  "samples": [
+    {
+      "name": "sample-0",
+      "sha256": "29c9b201b03d71ed2f58cddd5163e5480ec0fa05142656f1b7db123922fa6000",
+      "parts": 9
+    },
+    {
+      "name": "sample-1",
+      "sha256": "968602c6d6f1d24155ecb068e06fb7180165cfc6484176012c26d01140310449",
+      "parts": 9
+    },
+    {
+      "name": "sample-2",
+      "sha256": "92c1e87d0439fb0864c3102b43b5022d1a1f017d53e7f884f4f612e852443c57",
+      "parts": 9
+    },
+    {
+      "name": "sample-3",
+      "sha256": "b1f701cad48c2ea826e96555162e9003671287e1f14861ad230db59f17e72c8e",
+      "parts": 9
+    },
+    {
+      "name": "sample-4",
+      "sha256": "1a9d76286e902cdfed14d94118149421d410e59b3660b0ded96f94c941dcd301",
+      "parts": 9
+    },
+    {
+      "name": "sample-5",
+      "sha256": "968602c6d6f1d24155ecb068e06fb7180165cfc6484176012c26d01140310449",
+      "parts": 9
+    },
+    {
+      "name": "sample-6",
+      "sha256": "8ea4c84fb80ca1008a85fb5c24b0ecc2caf73cf4b4afe64e6aede6be17083143",
+      "parts": 9
+    },
+    {
+      "name": "sample-7",
+      "sha256": "a04fbf4f1c9b543818c6873a1028b215c0900457dcc84a9d835030c2e58409c4",
+      "parts": 9
+    },
+    {
+      "name": "sample-8",
+      "sha256": "1a9d76286e902cdfed14d94118149421d410e59b3660b0ded96f94c941dcd301",
+      "parts": 9
+    },
+    {
+      "name": "sample-9",
+      "sha256": "1c027d234438173a1550e4425fcea87ebc648b02b698a68eb6e2a6f2c0ef62ca",
+      "parts": 9
+    },
+    {
+      "name": "sample-10",
+      "sha256": "92c1e87d0439fb0864c3102b43b5022d1a1f017d53e7f884f4f612e852443c57",
+      "parts": 9
+    },
+    {
+      "name": "sample-11",
+      "sha256": "a04fbf4f1c9b543818c6873a1028b215c0900457dcc84a9d835030c2e58409c4",
+      "parts": 9
+    },
+    {
+      "name": "sample-12",
+      "sha256": "29c9b201b03d71ed2f58cddd5163e5480ec0fa05142656f1b7db123922fa6000",
+      "parts": 9
+    },
+    {
+      "name": "sample-13",
+      "sha256": "968602c6d6f1d24155ecb068e06fb7180165cfc6484176012c26d01140310449",
+      "parts": 9
+    },
+    {
+      "name": "sample-14",
+      "sha256": "92c1e87d0439fb0864c3102b43b5022d1a1f017d53e7f884f4f612e852443c57",
+      "parts": 9
+    },
+    {
+      "name": "sample-15",
+      "sha256": "b1f701cad48c2ea826e96555162e9003671287e1f14861ad230db59f17e72c8e",
+      "parts": 9
+    },
+    {
+      "name": "sample-16",
+      "sha256": "1a9d76286e902cdfed14d94118149421d410e59b3660b0ded96f94c941dcd301",
+      "parts": 9
+    },
+    {
+      "name": "sample-17",
+      "sha256": "968602c6d6f1d24155ecb068e06fb7180165cfc6484176012c26d01140310449",
+      "parts": 9
+    },
+    {
+      "name": "sample-18",
+      "sha256": "8ea4c84fb80ca1008a85fb5c24b0ecc2caf73cf4b4afe64e6aede6be17083143",
+      "parts": 9
+    },
+    {
+      "name": "sample-19",
+      "sha256": "a04fbf4f1c9b543818c6873a1028b215c0900457dcc84a9d835030c2e58409c4",
+      "parts": 9
+    }
+  ],
+  "metrics": [
+    {
+      "req_id": "SKU-01-A01",
+      "metric": "无改动往返通过率（20 合成）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A02",
+      "metric": "结构覆盖（6 类）",
+      "threshold": "6/6",
+      "actual": 6,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A03",
+      "metric": "畸形拒绝率（5 份）",
+      "threshold": "100%",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A04",
+      "metric": "修订统计（w:ins/w:del）",
+      "threshold": "2/1",
+      "actual": "2/1",
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-01-A05",
+      "metric": "OOXML 关系完整性",
+      "threshold": "0 issues",
+      "actual": 0,
+      "pass": true,
+      "counted": false
+    }
+  ],
+  "pass": true
+}
